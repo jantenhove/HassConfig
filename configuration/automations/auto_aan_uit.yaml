@@ -1,0 +1,64 @@
+#alles aan bij beweging en alles uit langer aan als 2 minuten
+- alias: 'Alles aan lichten aan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'off'
+  action:
+    - service: scene.turn_on
+      data_template:
+        entity_id: "{% if states.input_boolean.donker_buiten.state == 'on' %}scene.lampen_aan{% else %}scene.lampen_uit{% endif %}"
+    - service: light.turn_on
+      entity_id: light.av_apparatuur
+    - service: notify.jan
+      data:
+        title:  "Scene aangezet"
+        message: >
+          Scene {% if states.input_boolean.donker_buiten.state == 'on' %}Donker buiten scene{% else %}Licht buiten scene{% endif %}."
+
+- alias: 'Alles uit lichten uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'on'
+  action:
+    - service: script.turn_on
+      entity_id: script.alles_uit
+    - service: notify.jan
+      data:
+        title:  "Alles uitgezet"
+        message: >
+          Alle lampen + av apparatuur uitgezet
+
+#ab knop 1, aan is donker buiten, uit is licht buiten
+- alias: 'Ab knop 1 scenes'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: event
+      event_type: button_pressed
+      event_data:
+        entity_id: switch.afstandsbediening_wit_knop_1
+  action:
+    - service: scene.turn_on
+      data_template:
+        entity_id: "{% if trigger.event.data.state == 'on' %}scene.lampen_aan{% else %}scene.lampen_uit{% endif %}"
+
+#ab knop 3, aan is romantisch, uit is licht buiten
+- alias: 'Ab knop 3 scenes'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: event
+      event_type: button_pressed
+      event_data:
+        entity_id: switch.afstandsbediening_wit_knop_3
+  action:
+    - service: scene.turn_on
+      data_template:
+        entity_id: "{% if trigger.event.data.state == 'on' %}scene.romantisch_diner{% else %}scene.lampen_uit{% endif %}"
+  

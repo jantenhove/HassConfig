@@ -1,0 +1,11 @@
+- name: Tuinverlichting uit
+  entities:
+    light.veranda:
+      state: off
+    light.spotjes_tuin:
+      state: off
+    light.lamp_achterdeur:
+      state: off
+    light.lamp_voordeur:
+      state: off
+

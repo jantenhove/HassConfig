@@ -1,0 +1,20 @@
+media:
+  name: Media
+  view: yes
+  entities:
+    - group.harmony
+    - group.radio
+    - media_player.chromecast
+    - media_player.kodi
+       
+harmony:
+  name: Afstandbediening
+  view: no
+  entities:
+    - input_select.harmony
+
+radio:
+  name: Radio
+  view: no
+  entities:
+    - input_select.radio_zenders

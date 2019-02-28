@@ -1,0 +1,121 @@
+automatic_ventilation:
+  name: Automatisch ventileren
+  icon: mdi:autorenew
+  
+force_water_heating:
+  name: Boiler nu heet water maken
+  icon: mdi:water-pump
+
+boiler_teruglevering_kou_verwarmen:
+  name: Boiler verwarmen bij teruglevering+verwachte kou
+  icon: mdi:radiator
+
+boiler_verwarming:
+  name: Boiler vloerverwarming
+  icon: mdi:radiator
+  
+handdoek_radiator_auto:
+  name: Auto handdoekradiator
+  icon: mdi:radiator
+
+iedereen_slaapt:
+  name: Iedereen slaapt
+  icon: mdi:sleep
+    
+iemand_slaapt:
+  name: Iemand slaapt
+  icon: mdi:sleep
+
+jan_thuis:
+  name: Jan thuis
+  icon: mdi:home
+  
+manon_thuis:
+  name: Manon thuis
+  icon: mdi:home
+  
+alie_thuis:
+  name: Alie thuis
+  icon: mdi:home
+
+donker_buiten:
+  name: Donker buiten
+  
+douche_aan:
+  name: Douche aan
+  icon: mdi:shower-head
+
+bad_aan:
+  name: Bad aan
+  icon: mdi:cup-water
+
+alles_uit:
+  name: Alles uit
+  icon: mdi:power-plug-off
+
+alarm:
+  name: Alarm!
+  icon: mdi:alarm
+
+ledstrips_aan:
+  name: Ledstrips aan
+  icon: mdi:led-on
+
+tv_kijken:
+  name: Tv kijken
+  icon: mdi:television
+
+chromecast:
+  name: Chromecast
+  icon: mdi:television
+
+netflix:
+  name: Netflix
+  icon: mdi:television
+
+radio:
+  name: Radio
+  icon: mdi:radio
+
+kodi:
+  name: Kodi
+  icon: mdi:television
+
+media_uit:
+  name: Media uit
+  icon: mdi:stop-circle
+
+google_assistant_zonnepanelen:
+  name: Opbrengst zonnpanelen
+google_assistant_temperatuur:
+  name: Temperatuur in huis
+google_assistant_welterusten:
+  name: Temperatuur in huis
+
+droger_bezig:
+  name: Droger bezig
+  icon: mdi:washing-machine
+
+badkamer_verwarmen:
+  name: 'Badkamer verwarmen'
+  icon: mdi:radiator
+
+beneden_verwarmen:
+  name: 'Beneden verwarmen'
+  icon: mdi:radiator
+
+babykamer_verwarmen:
+  name: 'Babykamer verwarmen'
+  icon: mdi:radiator
+
+cv_verwarmen:
+  name: 'CV verwarmen'
+  icon: mdi:radiator
+
+boven_booster:
+  name: 'Boven temperatuur boost met CV'
+  icon: mdi:radiator
+
+beweging_beneden:
+  name: Beweging beneden
+  icon: mdi:run

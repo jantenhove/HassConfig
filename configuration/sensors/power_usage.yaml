@@ -1,0 +1,80 @@
+- platform: template
+  sensors:
+    elektra_verbruik_totaal:
+      friendly_name: "Eletra verbruik totaal"
+      unit_of_measurement: 'kWh'
+      value_template: "{{ (states.sensor.elektra_verbruik_hoog.state | float + states.sensor.elektra_verbruik_laag.state | float) | round(2) }}"
+    elektra_vandaag:
+      friendly_name: 'Elektra verbruik vandaag'
+      value_template: '{{ (states.sensor.gas_vandaag.attributes["electricity1"] | float + states.sensor.gas_vandaag.attributes["electricity2"] | float) | round(2) }}'
+      unit_of_measurement: 'kWh'
+    teruglevering_vandaag:
+      friendly_name: 'Elektra teruglevering vandaag'
+      value_template: '{{ (states.sensor.gas_vandaag.attributes["electricity1_returned"] | float + states.sensor.gas_vandaag.attributes["electricity2_returned"] | float) | round(2) }}'
+      unit_of_measurement: 'kWh'
+    elektra_kosten_vandaag:
+      friendly_name: 'Elektra kosten vandaag'
+      value_template: '{{ (states.sensor.gas_vandaag.attributes["electricity1_cost"] | float + states.sensor.gas_vandaag.attributes["electricity2_cost"] | float) | round(2) }}'
+      unit_of_measurement: '€'
+    gas_kosten_vandaag:
+      friendly_name: 'Gas kosten vandaag'
+      value_template: '{{ (states.sensor.gas_vandaag.attributes["gas_cost"] | float) | round(2) }}'
+      unit_of_measurement: '€'
+    totaal_kosten_vandaag:
+      friendly_name: 'Totaal energie kosten vandaag'
+      value_template: '€ {{ (states.sensor.gas_vandaag.attributes["total_cost"] | float) | round(2) }}'
+      unit_of_measurement: '€'
+    netto_elektra:
+      friendly_name: 'Netto elektra vebruik'
+      value_template: '{{ ((states.sensor.elektra_vandaag.state | float) - (states.sensor.teruglevering_vandaag.state | float)) | round(2) }}'
+      unit_of_measurement: 'kWh'
+- platform: mqtt
+  state_topic: "p1meter/eac"
+  unit_of_measurement: "W" 
+  name: "Elektra huidig verbruik"
+- platform: mqtt
+  state_topic: "p1meter/ear"
+  unit_of_measurement: "W" 
+  name: "Elektra huidig teruglevering"
+- platform: mqtt
+  state_topic: "p1meter/gas"
+  unit_of_measurement: "m³" 
+  name: "Gas verbruik"
+  value_template: "{{ ((value | float) /1000) | round(2) }}"
+- platform: mqtt
+  state_topic: "p1meter/eclt"
+  unit_of_measurement: "kWh" 
+  name: "Elektra verbruik laag"
+  value_template: "{{ ((value | float) /1000) | round(2) }}"
+- platform: mqtt
+  state_topic: "p1meter/echt"
+  unit_of_measurement: "kWh" 
+  name: "Elektra verbruik hoog"
+  value_template: "{{ ((value | float) /1000) | round(2) }}"
+- platform: mqtt
+  state_topic: "p1meter/erlt"
+  unit_of_measurement: "kWh" 
+  value_template: "{{ ((value | float) /1000) | round(2) }}"
+  name: "Elektra teruglevering laag"
+- platform: mqtt
+  state_topic: "p1meter/erht"
+  unit_of_measurement: "kWh" 
+  value_template: "{{ ((value | float) /1000) | round(2) }}"
+  name: "Elektra teruglevering hoog"
+- platform: rest
+  resource: http://192.168.2.100:8124/api/v2/consumption/today
+  headers:
+    User-Agent: Home Assistant
+    X-AUTHKEY: !secret dsmr_api_key
+  value_template: '{{ value_json.gas }}'
+  unit_of_measurement: "m³"
+  name: "Gas vandaag"
+  json_attributes:
+    - electricity1
+    - electricity2
+    - electricity1_returned
+    - electricity2_returned
+    - electricity1_cost
+    - electricity2_cost
+    - gas_cost
+    - total_cost

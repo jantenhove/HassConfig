@@ -1,0 +1,50 @@
+sensor.elektra_verbruik_totaal:
+  icon: mdi:power-plug
+sensor.elektra_vandaag:
+  friendly_name: Elektra verbruik vandaag
+  icon: mdi:power-plug
+  unit_of_measurement: kWh
+sensor.elektra_verbruik_laag:
+  icon: mdi:power-plug
+sensor.teruglevering_vandaag:
+  icon: mdi:speedometer
+  unit_of_measurement: kWh
+sensor.gas_kosten_vandaag:
+  icon: mdi:currency-eur
+  unit_of_measurement: €
+sensor.elektra_kosten_vandaag:
+  icon: mdi:currency-eur
+  unit_of_measurement: €
+sensor.totaal_kosten_vandaag:
+  icon: mdi:currency-eur
+  unit_of_measurement: €
+sensor.dark_sky_temperature:
+  friendly_name: Buitentemperatuur
+sensor.dark_sky_apparent_temperature:
+  friendly_name: Gevoelstemperatuur
+sensor.dark_sky_wind_speed:
+  friendly_name: Windsnelheid
+sensor.dark_sky_summary:
+  friendly_name: Weer
+binary_sensor.omvormer_goodwe:
+  icon: mdi:power
+sensor.omvormer_vermogen:
+  icon: mdi:weather-sunny
+sensor.omvormer_vandaag_opgewekt:
+  icon: mdi:power-plug  
+switch.deurbel:
+  icon: mdi:bell-ring
+switch.alleen_boven_verwarmen:
+  icon: mdi:arrow-up-bold
+switch.voordeur_state:
+  friendly_name: Camera voordeur in opname  
+sensor.itho_tijd:
+  icon: mdi:timer
+  friendly_name: Itho timer
+sensor.itho_snelheid:
+  icon: mdi:transfer
+  friendly_name: Itho snelheid
+binary_sensor.telefoon_jan_aan_lader:
+  icon: mdi:power-plug
+binary_sensor.telefoon_manon_aan_lader:
+  icon: mdi:power-plug

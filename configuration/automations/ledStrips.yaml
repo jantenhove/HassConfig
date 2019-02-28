@@ -1,0 +1,93 @@
+#TODO: Script maken en conditions etc laten voor animations
+- alias: 'Ledstrips aan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.ledstrips_aan
+      to: 'on'
+  action:
+  #copy from ledstrip_veranda_normaal
+  - service: light.turn_on
+    data_template:
+      entity_id: light.ledstrip_veranda
+      #brightness: '{{ (states.light.ledstrips_normaal.attributes.brightness | float * 0.6) | int }}'
+      #rgb_color: ["{{ states.light.ledstrips_normaal.attributes.rgb_color[0]|int }}", "{{ states.light.ledstrips_normaal.attributes.rgb_color[1]|int }}","{{ states.light.ledstrips_normaal.attributes.rgb_color[2]|int }}"]
+      #effect: '{{ states.light.ledstrips_normaal.attributes.effect }}'
+  - service: light.turn_on
+    data_template:
+      entity_id: light.ledstrip_voor
+      #brightness: '{{ states.light.ledstrips_normaal.attributes.brightness | int}}'
+      #rgb_color: ["{{ states.light.ledstrips_normaal.attributes.rgb_color[0]|int }}", "{{ states.light.ledstrips_normaal.attributes.rgb_color[1]|int }}","{{ states.light.ledstrips_normaal.attributes.rgb_color[2]|int }}"]
+      #effect: '{{ states.light.ledstrips_normaal.attributes.effect }}'      
+  # - service: input_number.set_value
+  #   data_template:
+  #     entity_id: input_number.ledStrip1_animatie_snelheid
+  #     value: '{{ states.input_number.ledstrips_animatie_snelheid_normaal.state  | int }}' 
+  # - service: input_number.set_value
+  #   data_template:
+  #     entity_id: input_number.ledStrip2_animatie_snelheid
+  #     value: '{{ states.input_number.ledstrips_animatie_snelheid_normaal.state  | int }}' 
+
+- alias: 'Ledstrips uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.ledstrips_aan
+      to: 'off'
+  action:
+  #copy from ledstrips_normaal
+  - service: light.turn_off
+    entity_id: light.ledstrip_veranda
+  - service: light.turn_off
+    entity_id: light.ledstrip_voor
+
+- alias: Ledstrip1 snelheid verzenden
+  initial_state: true
+  hide_entity: false
+  trigger:
+  - entity_id: input_number.ledStrip1_animatie_snelheid
+    platform: state
+  action:
+    - service: mqtt.publish
+      data_template:
+        payload_template: '{"speed": {{ trigger.to_state.state | int }}}'
+        retain: true
+        topic: home/LedStrip1_ha/state/in
+    
+- alias: Ledstrip1 snelheid ontvangen
+  initial_state: true
+  trigger:
+  - platform: mqtt
+    topic: home/LedStrip1_ha/state/out
+  action:
+  - service: input_number.set_value
+    data_template:
+        entity_id: input_number.ledStrip1_animatie_snelheid
+        value: '{{ trigger.payload_json.speed | int }}'
+    
+- alias: Ledstrip2 snelheid verzenden
+  initial_state: true
+  hide_entity: false
+  trigger:
+  - entity_id: input_number.ledStrip2_animatie_snelheid
+    platform: state
+  action:
+    - service: mqtt.publish
+      data_template:
+        payload_template: '{"speed": {{ trigger.to_state.state | int }}}'
+        retain: true
+        topic: home/LedStrip2_ha/state/in
+    
+- alias: Ledstrip2 snelheid ontvangen
+  initial_state: true
+  trigger:
+  - platform: mqtt
+    topic: home/LedStrip2_ha/state/out
+  action:
+  - service: input_number.set_value
+    data_template:
+        entity_id: input_number.ledStrip2_animatie_snelheid
+        value: '{{ trigger.payload_json.speed | int }}'
+    

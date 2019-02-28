@@ -1,0 +1,135 @@
+#alles aan bij beweging en alles uit langer aan als 2 minuten
+- alias: 'Buitenverlichting aan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'off'
+    - platform: state
+      entity_id: group.aanwezigheid
+      to: 'on'
+    - platform: state
+      entity_id: input_boolean.donker_buiten
+      to: 'on'
+    #- platform: template
+    #  value_template: '{{ states.binary_sensor.deur_benenden_open.state == "off" and (as_timestamp(now())-as_timestamp(states.binary_sensor.deur_benenden_open.last_updated)) > 120 }}' #2 minutes
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.donker_buiten
+      state: 'on'
+  action:
+    - service: scene.turn_on
+      entity_id: scene.tuinverlichting_gedimd
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.ledstrips_aan
+
+#alles uit bij niet meer donker buiten
+- alias: 'Buitenverlichting uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.donker_buiten
+      to: 'off'
+  action:
+    - service: scene.turn_on
+      entity_id: scene.tuinverlichting_uit
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.ledstrips_aan
+
+- alias: 'Buitenverlichting deur max'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'off'
+    - platform: state
+      entity_id: binary_sensor.deur_benenden_open
+      to: 'on'
+    - platform: state
+      entity_id: input_boolean.donker_buiten
+      to: 'on'
+      for:
+        seconds: 1 #delay for 1 sec so the normal can go first
+  condition:
+    - condition: state
+      entity_id: input_boolean.alles_uit
+      state: 'off'
+    - condition: state
+      entity_id: light.lamp_achterdeur
+      state: 'off'
+    - condition: state
+      entity_id: light.veranda
+      state: 'on'
+    - condition: state
+      entity_id: binary_sensor.deur_benenden_open
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.donker_buiten
+      state: 'on'
+  action:
+    - event: temporary_change
+      event_data:
+        entity_id: light.veranda
+        temporary_start: 1
+        brightness: 255
+    - event: temporary_change
+      event_data:
+        entity_id: light.spotjes_tuin
+        temporary_start: 1
+        brightness: 255
+    - service: light.turn_on
+      entity_id: light.lamp_achterdeur
+    - event: temporary_change
+      event_data:
+        entity_id: light.lamp_voordeur
+        temporary_start: 1
+        brightness: 255
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_voor
+        temporary_start: 1
+        brightness: 200
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_veranda
+        temporary_start: 1
+        brightness: 175
+
+#restore previous value. 
+- alias: 'Buitenverlichting deur terug van max'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.deur_benenden_open
+      to: 'off'
+      for:
+        minutes: 5
+  action:
+    - event: temporary_change
+      event_data:
+        entity_id: light.veranda
+        temporary_start: 0
+    - event: temporary_change
+      event_data:
+        entity_id: light.spotjes_tuin
+        temporary_start: 0
+    - event: temporary_change
+      event_data:
+        entity_id: light.lamp_voordeur
+        temporary_start: 0
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_veranda
+        temporary_start: 0
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_voor
+        temporary_start: 0
+    - service: light.turn_off
+      entity_id: light.lamp_achterdeur

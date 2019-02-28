@@ -1,0 +1,182 @@
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/online"
+  payload_on: 1
+  payload_off: 0
+  name: "Omvormer GoodWe"
+
+- platform: mqtt
+  state_topic: "goodwe"
+  payload_on: online
+  name: "GoodWeLogger washok"
+
+- platform: mqtt
+  state_topic: "events/otgw/otgw/centralheating"
+  payload_on: 1
+  payload_off: 0
+  name: "Verwarming aan"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/hotwater"
+  payload_on: 1
+  payload_off: 0
+  name: "Heet water aan"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/chenable"
+  name: "CV verwarming"
+  payload_on: 1
+  payload_off: 0
+- platform: mqtt
+  state_topic: "events/otgw/otgw/dhwenable"
+  name: "Heet water enabled"
+  payload_on: 1
+  payload_off: 0
+- platform: mqtt
+  state_topic: "events/otgw/otgw/flame"
+  name: "Vlam ketel"
+  payload_on: 1
+  payload_off: 0
+  
+- platform: mqtt
+  name: "Telefoon Jan aan lader"
+  state_topic: "tasker/Jan/charging"
+  payload_on: "1"
+  payload_off: "0"
+- platform: mqtt
+  name: "Telefoon Manon aan lader"
+  state_topic: "tasker/Manon/charging"
+  payload_on: "1"
+  payload_off: "0"
+  
+- platform: mqtt
+  name: "Telefoon Jan thuis"
+  state_topic: "tasker/Jan/home"
+  payload_on: "1"
+  payload_off: "0"
+  
+- platform: mqtt
+  name: "Telefoon Manon thuis"
+  state_topic: "tasker/Manon/home"
+  payload_on: "1"
+  payload_off: "0"
+  
+- platform: mqtt
+  name: "Sonoff boiler status"
+  state_topic: "boiler/sonoff/tele/LWT"
+  value_template: "{{ value }}"
+  payload_on: "Online"
+  payload_off: "Offline"
+  device_class: connectivity
+    
+- platform: mqtt
+  name: "Sonoff droger status"
+  state_topic: "droger/sonoff/tele/LWT"
+  value_template: "{{ value }}"
+  payload_on: "Online"
+  payload_off: "Offline"
+  device_class: connectivity
+ 
+ 
+- platform: mqtt
+  name: "Sonoff handoekradiator status"
+  state_topic: "handoekradiator/sonoff/tele/LWT"
+  value_template: "{{ value }}"
+  payload_on: "Online"
+  payload_off: "Offline"
+  device_class: connectivity
+
+- platform: mqtt
+  name: "Sonoff pvrelais status"
+  state_topic: "pvrelais/sonoff/tele/LWT"
+  value_template: "{{ value }}"
+  payload_on: "Online"
+  payload_off: "Offline"
+  device_class: connectivity
+
+- platform: template
+  sensors:
+    beweging_beneden:
+      friendly_name: "Beweging beneden"
+      entity_id:
+        - sensor.beweging_woonkamer_achter_sensor_status
+        - binary_sensor.fibaro_woonkamer_motion
+      device_class: motion
+      value_template: >
+        {{ states.binary_sensor.fibaro_woonkamer_motion.state == "on" }}
+          #states.sensor.beweging_hal_sensor_status.state == "Motion"  or
+
+- platform: template
+  sensors:
+    beweging_beneden_afgelopen_half_uur:
+      device_class: motion
+      friendly_name: "Beweging beneden afgelopen half uur"
+      delay_off:
+        minutes: 30
+      value_template: >
+        {{ states.input_boolean.beweging_beneden.state == "on" }}
+     
+- platform: template
+  sensors:
+    deur_benenden_open:
+      device_class: door
+      friendly_name: "Deur beneden open"
+      value_template: >
+          {{ states.binary_sensor.achterdeur_contact.state == "on" or
+            states.binary_sensor.voordeur_contact.state == "on"  
+            or states.binary_sensor.schuurdeur_contact.state  == "on" }}
+
+- platform: template
+  sensors:
+    boven_open:
+      device_class: door
+      friendly_name: "Deur/raam boven open"
+      value_template: >
+          {{ states.binary_sensor.door_window_sensor_158d000237c676.state == "on" or
+            states.binary_sensor.door_window_sensor_158d000232a9f8.state == "on"  }}
+            
+- platform: template
+  sensors:
+    houtkachel_aan:
+      value_template: >
+                {{ (states.sensor.woonkamer_bij_kachel_temperature.state | float - states.sensor.kamer_thermostaat.state | float > 1.5 ) and 
+                states.sensor.dark_sky_apparent_temperature.state | float < 15 }}
+      delay_on: '00:01:00'
+      delay_off: '00:10:00'
+      friendly_name: "Houtkachel aan"
+      device_class: heat
+
+- platform: template
+  sensors:
+    alleen_boven_verwarmen_gewenst:
+      value_template: > 
+        {{ (states.climate.thermostaat.attributes.current_temperature | float - 0.3  >= states.climate.thermostaat.attributes.temperature | float) or
+            (states.climate.thermostaat.attributes.temperature | float - states.sensor.temperature_badkamer.state | float - 0.9) >
+            states.climate.thermostaat.attributes.temperature | float - states.climate.thermostaat.attributes.current_temperature | float}}
+      delay_on: '00:10:00'
+      delay_off: '00:10:00'
+      friendly_name: "Alleen boven verwarmen gewenst"
+      device_class: heat
+
+- platform: template
+  sensors:
+    cv_verwarmen:
+      value_template: > 
+        {{ states.switch.alleen_boven_verwarmen.state == 'off' or
+            ((states.climate.babykamer.attributes.temperature | float - states.climate.babykamer.attributes.current_temperature | float) > 1 or
+            (states.climate.badkamer.attributes.temperature | float - states.climate.badkamer.attributes.current_temperature | float) > 1 )}}
+      delay_on: '00:10:00'
+      delay_off: '00:10:00'
+      friendly_name: "Alleen boven verwarmen gewenst"
+      device_class: heat
+
+
+- platform: mqtt
+  name: "Beweging camera voor"
+  state_topic: "motion/voordeur"
+  payload_on: "1"
+  payload_off: "0"
+  device_class: "motion"
+- platform: mqtt
+  name: "Beweging camera achter"
+  state_topic: "motion/achterdeur"
+  payload_on: "1"
+  payload_off: "0"
+  device_class: "motion"

@@ -1,0 +1,5 @@
+- platform: template
+  sensors:
+    volgende_gezamelijke_afspraak:
+      friendly_name: 'Volgende afspraak'
+      value_template: '{{ strptime(states.calendar.gezamelijke_agenda.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%A, %d %b, om %H:%M") }}: {{ states.calendar.gezamelijke_agenda.attributes.message }}'

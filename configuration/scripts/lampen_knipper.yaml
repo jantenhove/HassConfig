@@ -1,0 +1,32 @@
+lampen_knipper:
+  alias: Lampen knipper
+  sequence:
+    # This is Home Assistant Script Syntax
+    - service: light.turn_on
+      data: 
+        entity_id: light.eettafel, light.zithoek, light.veranda, light.spotjes_tuin
+        brightness: 255
+    - delay:
+        milliseconds: 200
+    - service: light.turn_on
+      entity_id: light.lamp_keuken
+    - service: light.turn_on
+      entity_id: light.lampjes_kast
+    - service: light.turn_on
+      entity_id: light.lamp_stoel
+    - delay:
+        milliseconds: 800
+    - service: light.turn_on
+      data: 
+        entity_id: light.eettafel, light.zithoek, light.veranda, light.spotjes_tuin
+        brightness: 5
+    - delay:
+        milliseconds: 200
+    - service: light.turn_off
+      entity_id: light.lamp_keuken
+    - service: light.turn_off
+      entity_id: light.lampjes_kast
+    - service: light.turn_off
+      entity_id: light.lamp_stoel
+      
+    

@@ -1,0 +1,6 @@
+- platform: radarr
+  api_key: d8ed674dacd045f5a87228885cfac845
+  host: 192.168.2.100
+  port: 19824
+  monitored_conditions:
+    - upcoming

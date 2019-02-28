@@ -1,0 +1,214 @@
+- alias: Set Harmony activity using input_select
+  hide_entity: True
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: input_select.harmony
+  action:
+    service: remote.turn_on
+    entity_id: remote.woonkamer
+    data_template:
+      activity: >
+        {% if is_state("input_select.harmony", "Tv") %}
+          34898520
+        {% elif is_state("input_select.harmony", "Netflix-Xbox One") %}
+          22255178
+        {% elif is_state("input_select.harmony", "Kodi") %}
+          9488717
+        {% elif is_state("input_select.harmony", "Chromecast") %}
+          9488718
+        {% elif is_state("input_select.harmony", "Spotify") %}
+          9488719
+        {% elif is_state("input_select.harmony", "Radio") %}
+          36283781
+        {% else %}
+          -1
+        {% endif %}
+      #old radio id was: 9500160
+# This next automation is to update the input_select when the Harmony's
+# activity was changed from somewhere else, e.g. using its physical remote.
+- alias: Update Harmony input_select
+  hide_entity: True
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: remote.woonkamer
+    - platform: homeassistant
+      event: start
+  condition:
+    condition: template
+    value_template: '{{ (as_timestamp(now())-as_timestamp(states.input_select.harmony.last_updated)) > 30 }}' #online update if not within 30 sec
+  action:
+    - service: input_select.select_option
+      data_template:
+        entity_id: input_select.harmony
+        option: "{{ states.remote.woonkamer.attributes.current_activity }}"
+
+- alias: "Publish harmony state"
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: remote.woonkamer
+  action:
+  - service: mqtt.publish
+    data:
+      topic: "home_assistant/state/media"
+      payload_template: "{{ states.remote.woonkamer.attributes.current_activity }}"
+
+- alias: "Auto stop Kodi"
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: remote.woonkamer
+  condition:
+    condition: template
+    value_template: '{{ states.remote.woonkamer.attributes.current_activity  != "Radio" }}'
+  action:
+  - service: media_player.media_stop
+    data:
+      entity_id: media_player.kodi
+
+- alias: "Auto stop Chromecast"
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: remote.woonkamer
+  # condition:
+  #   condition: and
+  #   conditions:
+  #   - condition: template
+  #     value_template: '{{  states.remote.woonkamer.attributes.current_activity != "Spotify" }}'
+  #   - condition: template
+  #     value_template: '{{  states.remote.woonkamer.attributes.current_activity != "Radio" }}'
+  #   - condition: template
+  #     value_template: '{{  states.remote.woonkamer.attributes.current_activity != "Chromecast" }}'
+  action:
+  - service: media_player.turn_off
+    data:
+      entity_id:  media_player.woonkamer
+
+
+- alias: "Switch tv kijken"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_boolean.tv_kijken
+      to: 'on'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "Tv"
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.tv_kijken
+
+- alias: "Switch Chromecast"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_boolean.chromecast
+      to: 'on'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "Chromecast"
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.chromecast
+
+- alias: "Switch Spotify"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_boolean.spotify
+      to: 'on'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "Spotify"
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.spotify
+
+- alias: "Switch Netflix"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_boolean.netflix
+      to: 'on'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "Netflix-Xbox One"
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.netflix
+
+- alias: "Switch Radio"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_boolean.radio
+      to: 'on'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "Radio"
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.radio
+
+- alias: "Switch Kodi"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_boolean.kodi
+      to: 'on'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "Kodi"
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.kodi
+
+- alias: "Switch media uit"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_boolean.media_uit
+      to: 'off'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "PowerOff"
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.media_uit
+
+# - alias: "Auto start radio Kodi"
+  # trigger:
+    # platform: state
+    # entity_id: remote.woonkamer
+  # condition:
+    # condition: template
+    # value_template: '{{  states.remote.woonkamer.attributes.current_activity == "Radio" }}'
+  # action:
+  # - delay:
+      # seconds: 10
+  # - service: media_player.kodi_call_method
+    # data:
+      # entity_id: media_player.kodi
+      # method: Player.Open
+      # item:
+        # file: "D:/Radio/Skyradio.strm"
+      # options:
+        # resume: False
+        

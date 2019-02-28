@@ -1,0 +1,16 @@
+grafana:
+  title: 'Grafana'
+  url: 'https://grafana.thuis.outside-url.com'
+  icon: mdi:graphql
+zoneminder:
+  title: 'Zoneminder'
+  url: 'https://zm.thuis.outside-url.com/zm'
+  icon: mdi:cctv
+sonarr:
+  title: 'Sonarr'
+  url: https://sonarr.thuis.outside-url.com
+  icon: mdi:cloud-download
+radarr:
+  title: Radarr
+  url: https://radarr.thuis.outside-url.com
+  icon: mdi:cloud-download

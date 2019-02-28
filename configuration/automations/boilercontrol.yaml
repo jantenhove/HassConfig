@@ -1,0 +1,178 @@
+
+#Bij lage temp en opbrengst hoger als 600, verwarm de boiler (warmte bufferen)
+- alias: 'Boiler verwarmen bij lage temperatuur en hoge teruglevering'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.elektra_huidig_teruglevering
+      above: 600
+      for: 
+        minutes: 15
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.dark_sky_overnight_low_apparent_temperature_0
+      below: 10
+    - condition: numeric_state
+      entity_id: sensor.dark_sky_daytime_high_apparent_temperature_0
+      below: 15
+    - condition: numeric_state
+      entity_id: sensor.elektra_huidig_teruglevering
+      above: 600
+    - condition: numeric_state
+      entity_id: sensor.boiler_temperatuur
+      below: 58
+    - condition: state
+      entity_id: input_boolean.boiler_teruglevering_kou_verwarmen
+      state: 'off'
+    - condition: state
+      entity_id: binary_sensor.omvormer_goodwe
+      state: 'on'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.boiler_teruglevering_kou_verwarmen
+    - service: notify.jan
+      data:
+        title:  "Boiler geforceerd verwarmen bij hoge teruglevering"
+        message: >
+          Boiler temperatuur is: {{ states.sensor.boiler_temperatuur.state }} °C, Teruglevering is: {{ states.sensor.elektra_huidig_teruglevering.state }} W.
+
+- alias: 'Boiler verwarmen bij lage temperatuur en hoge teruglevering uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.elektra_huidig_teruglevering
+      below: 10
+      for: 
+        minutes: 15
+    - platform: state
+      entity_id: binary_sensor.omvormer_goodwe
+      to: 'off'
+      for:
+        minutes: 15
+    - platform: numeric_state
+      entity_id: sensor.boiler_temperatuur
+      above: 58
+  condition:
+    - condition: state
+      entity_id: input_boolean.boiler_teruglevering_kou_verwarmen
+      state: 'on'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.boiler_teruglevering_kou_verwarmen
+    - service: notify.jan
+      data:
+        title:  "Boiler geforceerd verwarmen uitgezet"
+        message: >
+          Boiler temperatuur is: {{ states.sensor.boiler_temperatuur.state }} °C, Teruglevering is: {{ states.sensor.elektra_huidig_teruglevering.state }} W.
+ 
+
+# Boiler schakeltijden, copy van boiler high
+- alias: 'Boiler auto temp'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time
+      at: '03:00:01' 
+    - platform: time
+      at: '15:00:01'  
+    - platform: state
+      entity_id: input_boolean.force_water_heating, input_boolean.boiler_teruglevering_kou_verwarmen, binary_sensor.houtkachel_aan
+      to: 'on'
+  condition:
+    - condition: or
+      conditions:
+      - condition: template
+        value_template: '{{ states.input_number.boiler_temperatuur.state | float < states.input_number.boiler_high_temperatuur.state | float}}'
+      - condition: state
+        entity_id: input_boolean.force_water_heating
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.houtkachel_aan
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.boiler_teruglevering_kou_verwarmen
+        state: 'on'
+  action:
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.boiler_temperatuur
+        value: '{{ states.input_number.boiler_high_temperatuur.state | float }}' #copy over the value
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.force_water_heating
+
+#Checken of de boiler moet verwarmen. Eerst controleren of de ingestelde temp lager is als boilertemp
+#Ook controleren of boiler niet al draait.
+- alias: 'Boiler verwarmen'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      minutes: '/1'
+      seconds: 00
+    - platform: state
+      entity_id: input_number.boiler_temperatuur
+  condition:
+    condition: and
+    conditions:
+    #- condition: template
+    #  value_template: '{{ states.sensor.boiler_huidig_verbruik.state | float < 10 | float}}'
+    - condition: template
+      value_template: '{{ states.sensor.boiler_temperatuur.state | float + 1.1 < states.input_number.boiler_temperatuur.state | float}}'
+    - condition: template
+      value_template: '{{ states.sensor.boiler_temperatuur.state | float > 4.0 }}'
+    - condition: state
+      entity_id: switch.pv_relais
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.bad_aan
+      state: 'off'
+  action:    
+    - service: switch.turn_on
+      entity_id: switch.pv_relais
+    - service: notify.jan
+      data:
+        title:  "Boiler aangezet"
+        message: >
+          Boiler temperatuur is: {{ states.sensor.boiler_temperatuur.state }} °C, ingestelde temp is: {{ states.input_number.boiler_temperatuur.state }} °C.
+
+
+#als de boiler op temperatuur is mag de input number worden gereset naar default (minium)
+- alias: 'Boiler temp reset temp'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      minutes: '/1'
+      seconds: 00
+  condition:
+    condition: and
+    conditions:
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: switch.pv_relais
+        state: 'on'
+      - condition: template
+        value_template: '{{ states.input_number.boiler_temperatuur.state | float > states.input_number.boiler_temperatuur.attributes.min | float }}' 
+    - condition: template
+      value_template: '{{ states.sensor.boiler_temperatuur.state | float + 1 >= states.input_number.boiler_temperatuur.state | float }}' #+ 1 because pv relais off means half an hour extra
+    - condition: state
+      entity_id: input_boolean.douche_aan #als douche aan is, niet resetten. Dit gebeurt als de douche uit gaat
+      state: 'off'
+    - condition: state
+      entity_id:  switch.cv_pomp_aan_ot #als vloerverwarming aan is
+      state: 'off'
+  action:
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.boiler_temperatuur
+        value: '{{ states.input_number.boiler_temperatuur.attributes.min| float }}' #copy over the value   
+    - service: switch.turn_off
+      entity_id: switch.pv_relais
+    - service: notify.jan
+      data:
+        title:  "Boiler op temperatuur"
+        message: >
+          Boiler temperatuur is: {{ states.sensor.boiler_temperatuur.state }} °C.

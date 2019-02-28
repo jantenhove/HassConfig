@@ -1,0 +1,116 @@
+# Douche uit
+- alias: 'Douche uit check'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: sensor.boiler_in_water_temperatuur
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.douche_aan
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: template
+          value_template: '{{ states.sensor.stats_boiler_in_temp_mean.attributes.change | float < -0.1 }}'
+        - condition: template
+          value_template: '{{ states.sensor.stats_boiler_uit_temp_mean.attributes.change | float < -1 }}'        
+  action:
+    service: input_boolean.turn_off
+    entity_id: input_boolean.douche_aan
+ 
+
+# Douche aan check
+- alias: 'Douche aan check'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: sensor.boiler_in_water_temperatuur
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        after: '05:00:00'
+        before: '22:00:00'
+      - condition: state
+        entity_id: input_boolean.douche_aan
+        state: 'off'
+      - condition: template
+        value_template: '{{ states.sensor.stats_boiler_in_temp_mean.attributes.change | float > 1 }}'      
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.douche_aan
+
+- alias: 'Douche aan/uit -> Boiler aan/uit'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.douche_aan
+  action:    
+    service_template: >
+      {% if trigger.to_state.state == "on" %}
+      switch.turn_on
+      {% else %}
+      switch.turn_off
+      {% endif %}
+    entity_id: switch.pv_relais
+
+- alias: 'Douche wijziging melding'  
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.douche_aan
+  action:
+    - service: notify.jan
+      data:
+        title:  "Douche {% if states.input_boolean.douche_aan.state == 'on' %}staat aan{% else %}staat niet aan{% endif %}."
+        message: >
+          Temperatuur ingaande water is: {{ states.sensor.boiler_in_water_temperatuur.state }} °C, uitgaande temperatuur is: {{ states.sensor.boiler_uit_water_temperatuur.state }} °C. Boiler temperatuur is: {{ states.sensor.boiler_temperatuur.state }} °C
+
+
+- alias: 'Bad aan check'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: sensor.boiler_in_water_temperatuur
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.bad_aan
+        state: 'off'
+      - condition: template
+        value_template: '{{ states.sensor.stats_boiler_in_temp_mean.attributes.change | float < -2 }}'      
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.bad_aan
+
+- alias: Bad auto uit #after 45 minutes
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bad_aan
+      to: 'on'
+      for:
+        minutes: 45
+    - platform: template  #when restarted, use this trigger, not sure if it works, but may replace above trigger
+      value_template: "{{ states.input_boolean.bad_aan.state == 'on' and as_timestamp(now()) - as_timestamp(states.input_boolean.bad_aan.last_changed) | int > 2700 }}"  
+  action:
+    service: homeassistant.turn_off
+    entity_id: input_boolean.bad_aan
+
+- alias: 'Bad wijziging melding'  
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bad_aan
+  action:
+    - service: notify.jan
+      data:
+        title:  "Bad {% if states.input_boolean.bad_aan.state == 'on' %}staat aan{% else %}staat niet aan{% endif %}."
+        message: >
+          Temperatuur ingaande water is: {{ states.sensor.boiler_in_water_temperatuur.state }} °C, uitgaande temperatuur is: {{ states.sensor.boiler_uit_water_temperatuur.state }} °C. Boiler temperatuur is: {{ states.sensor.boiler_temperatuur.state }} °C

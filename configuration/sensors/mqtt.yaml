@@ -1,0 +1,8 @@
+- platform: mqtt
+  state_topic: "tasker/Jan/alarm"
+  name: "Tijd wekker Jan"
+  value_template: '{{ value }}'
+- platform: mqtt
+  state_topic: "tasker/Manon/alarm"
+  name: "Tijd wekker Manon"
+  value_template: '{{ value }}'

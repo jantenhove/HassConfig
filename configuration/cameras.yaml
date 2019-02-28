@@ -1,0 +1,22 @@
+# - platform: zoneminder
+# - platform: generic
+#   name: Elektra
+#   still_image_url: 'http://192.168.2.100:3000/render/d-solo/000000001/elektra?orgId=1&panelId=1&tab=legend&width=1000&height=500&tz=UTC%2B01%3A00'
+#   username: !secret grafana_user
+#   password: !secret grafana_password
+#   scan_interval: 300
+# - platform: generic
+#   name: Gas
+#   still_image_url: 'http://192.168.2.100:3000/render/d-solo/000000001/elektra?panelId=3&orgId=1&width=1000&height=500&tz=UTC%2B01%3A00'
+#   username: !secret grafana_user
+#   password: !secret grafana_password
+#   scan_interval: 300
+
+- platform: mjpeg
+  name: Voordeur
+  mjpeg_url: http://192.168.2.100:8081
+  still_image_url: http://192.168.2.100:8765/picture/1/current/
+- platform: mjpeg
+  name: Achterdeur
+  mjpeg_url: http://192.168.2.100:8082
+  still_image_url: http://192.168.2.100:8765/picture/2/current/

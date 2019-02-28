@@ -1,0 +1,12 @@
+- platform: rfxtrx
+  automatic_add: False
+  devices:
+    0a5207204a0e00d63b0159:
+      name: Woonkamer bij kachel
+      data_type:
+       - Humidity
+       - Temperature
+    08200100cac5b70479:
+      name: Beweging woonkamer achter
+    08200144cac5678459:
+      name: Beweging hal

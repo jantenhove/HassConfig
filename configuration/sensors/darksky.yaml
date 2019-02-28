@@ -1,0 +1,19 @@
+- platform: darksky
+  api_key: !secret dark_sky_api_key2
+  language: nl
+  forecast:
+    - 0
+  monitored_conditions:
+    - summary
+    - temperature
+    - apparent_temperature
+    - wind_speed
+    - cloud_cover
+    - hourly_summary
+    - icon
+    - nearest_storm_distance
+    - temperature_high
+    - temperature_low
+    - apparent_temperature_high
+    - apparent_temperature_low
+  scan_interval: '00:05'

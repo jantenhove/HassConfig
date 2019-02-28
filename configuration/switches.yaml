@@ -1,0 +1,116 @@
+- platform: rfxtrx
+  automatic_add: False
+  #fire_event: true
+  devices:
+    0b1100bb009e7b6e01000050:
+      name: Afstandsbediening wit knop 1
+      #fire_event: true # to catch 'group off' event
+    0b110020009e7b6e03010f50:
+      name: Afstandsbediening wit knop 3
+
+- platform: mqtt
+  name: "Alleen boven verwarmen"
+  state_topic: "espThermoValve/valve/state"
+  command_topic: "espThermoValve/gpio/5"
+  payload_on: 1
+  payload_off: 0
+  qos: 0
+  
+- platform: mqtt
+  name: "Deurbel"
+  state_topic: "espDoorbell/doorbell/state"
+  command_topic: "espDoorbell/gpio/15"
+  payload_on: 1
+  payload_off: 0
+  qos: 0
+
+- platform: mqtt
+  name: "CV pomp aan (OT)"
+  #state_topic: "events/otgw/otgw/outsidetemperature"
+  command_topic: "espCV/OT"
+  state_topic:  "espCV/temperature"
+  payload_on: -10
+  payload_off: 20
+  qos: 0
+  
+- platform: mqtt
+  name: "Klep verwarming boiler"
+  state_topic:  "boilerValve/state"
+  command_topic: "boilerValve/command"
+  payload_on: "ON"
+  payload_off: "OFF"
+  qos: 0
+  
+# - platform: zoneminder
+#   command_on: Modect
+#   command_off: Nodect
+
+- platform: mqtt
+  name: "Boiler aan/uit"
+  state_topic: "boiler/sonoff/stat/POWER"
+  command_topic: "boiler/sonoff/cmnd/POWER"
+  qos: 1
+  payload_on: "ON"
+  payload_off: "OFF"
+  retain: true
+  
+- platform: mqtt
+  name: "Handoekradiator"
+  state_topic: "handoekradiator/sonoff/stat/POWER"
+  command_topic: "handoekradiator/sonoff/cmnd/POWER"
+  qos: 1
+  payload_on: "ON"
+  payload_off: "OFF"
+
+- platform: mqtt
+  name: "PV Relais"
+  state_topic: "pvrelais/sonoff/stat/POWER"
+  command_topic: "pvrelais/sonoff/cmnd/POWER"
+  qos: 1
+  payload_on: "ON"
+  payload_off: "OFF"
+
+- platform: mqtt
+  name: "Droger"
+  state_topic: "droger/sonoff/stat/POWER"
+  command_topic: "droger/sonoff/cmnd/POWER"
+  qos: 1
+  payload_on: "ON"
+  payload_off: "OFF"
+  retain: true
+  
+- platform: template
+  switches:
+    badkamer_verwarmen:
+      friendly_name: 'Badkamer verwarmen'
+      value_template: "{{ is_state('input_boolean.badkamer_verwarmen', 'on') }}"
+      turn_on:
+        service: input_boolean.turn_on
+        data:
+          entity_id: input_boolean.badkamer_verwarmen
+      turn_off:
+        service: input_boolean.turn_off
+        data:
+          entity_id: input_boolean.badkamer_verwarmen
+    babykamer_verwarmen:
+      friendly_name: 'Babykamer verwarmen'
+      value_template: "{{ is_state('input_boolean.babykamer_verwarmen', 'on') }}"
+      turn_on:
+        service: input_boolean.turn_on
+        data:
+          entity_id: input_boolean.babykamer_verwarmen
+      turn_off:
+        service: input_boolean.turn_off
+        data:
+          entity_id: input_boolean.babykamer_verwarmen
+    beneden_verwarmen:
+      friendly_name: 'Beneden verwarmen'
+      value_template: "{{ is_state('input_boolean.beneden_verwarmen', 'on') }}"
+      turn_on:
+        service: input_boolean.turn_on
+        data:
+          entity_id: input_boolean.beneden_verwarmen
+      turn_off:
+        service: input_boolean.turn_off
+        data:
+          entity_id: input_boolean.beneden_verwarmen

@@ -1,0 +1,29 @@
+- alias: 'Alie skyradio'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alie_thuis
+      from: 'off'
+      to: 'on'
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.jan_thuis
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.manon_thuis
+        state: 'off'
+  action:
+    - delay:
+        seconds: 30
+    - service: remote.turn_on
+      entity_id: remote.woonkamer
+      data:
+        activity: 'Radio'
+    - service: notify.jan
+      data:
+        title: "Radio aangezet voor Alie"
+        message: "Alie is alleen thuis. Radio op skyradio gezet"    
+     

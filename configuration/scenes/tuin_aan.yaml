@@ -1,0 +1,14 @@
+- name: Tuinverlichting maximaal
+  entities:
+    light.veranda:
+      state: on
+      brightness: 255
+    light.spotjes_tuin:
+      state: on
+      brightness: 255
+    light.lamp_achterdeur:
+      state: on
+    light.lamp_voordeur:
+      state: on
+      brightness: 255
+

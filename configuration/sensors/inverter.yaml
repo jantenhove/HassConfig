@@ -1,0 +1,43 @@
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/pac"
+  unit_of_measurement: "W" 
+  name: "Omvormer vermogen"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/vpv1"
+  unit_of_measurement: "V" 
+  name: "Omvormer voltage string 1"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/vpv2"
+  unit_of_measurement: "V" 
+  name: "Omvormer voltage string 2"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/ipv1"
+  unit_of_measurement: "A" 
+  name: "Omvormer stroom string 1"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/ipv2"
+  unit_of_measurement: "A" 
+  name: "Omvormer stroom string 2"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/vac1"
+  unit_of_measurement: "V" 
+  name: "Omvormer voltage net"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/iac1"
+  unit_of_measurement: "A" 
+  name: "Omvormer stroom net"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/fac1"
+  unit_of_measurement: "Hz" 
+  name: "Omvormer frequentie net"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/temp"
+  unit_of_measurement: "°C" 
+  name: "Omvormer temperatuur"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/workmode"
+  name: "Omvormer werkmode"
+- platform: mqtt
+  state_topic: "goodwe/93600DSN171W0235/eday"
+  unit_of_measurement: "kW" 
+  name: "Omvormer vandaag opgewekt"

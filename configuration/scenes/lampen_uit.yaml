@@ -1,0 +1,17 @@
+- name: Lampen uit
+  entities:
+    light.lamp_stoel:
+      state: off
+    light.lamp_keuken:
+      state: on
+    light.lampjes_kast:
+      state: on
+      brightness: 30
+    light.eettafel:
+      state: off
+    light.lamp_hoek:
+      state: off
+    light.zithoek:
+      state: off
+    switch.kerstverlichting:
+      state: on

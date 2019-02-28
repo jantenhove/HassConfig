@@ -1,0 +1,44 @@
+downloads:
+  name: Downloads
+  view: yes
+  entities:
+    - group.sonarr
+    - group.radarr
+    - group.sabnzbd
+    - group.deluge
+
+sonarr:
+  name: Sonarr
+  view: no
+  entities:
+    - sensor.sonarr_upcoming
+    - sensor.sonarr_queue
+    - weblink.sonarr
+
+radarr:
+  name: Radarr
+  view: no
+  entities:
+    - sensor.radarr_upcoming
+    - weblink.radarr
+    
+sabnzbd:
+  name: Sabnzbd
+  view: no
+  entities:
+    - sensor.sabnzbd_status
+    - sensor.sabnzbd_speed
+    - sensor.sabnzbd_queue
+    - sensor.sabnzbd_left    
+    - sensor.sabnzbd_queue_count
+    - sensor.sabnzbd_disk_free
+    - weblink.sabnzbd
+    
+deluge:
+  name: Deluge
+  view: no
+  entities:
+    - sensor.deluge_status
+    - sensor.deluge_down_speed
+    - sensor.deluge_up_speed
+    - weblink.deluge

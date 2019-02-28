@@ -1,0 +1,26 @@
+harmony:
+  name: Harmony
+  options:
+    - PowerOff
+    - Tv
+    - Netflix-Xbox One
+    - Kodi
+    - Chromecast
+    - Spotify
+    - Radio
+  icon: mdi:monitor
+
+radio_zenders:
+  name: Radio zender
+  options:
+    - SkyRadio
+    - Radio 2
+    - Q-Music
+    - Q-Music non stop
+    - Radio 538
+    - Radio 3
+    - Slam FM
+    - Radio 1
+    - BNR
+    - SkyRadio kerst
+  icon: mdi:radio

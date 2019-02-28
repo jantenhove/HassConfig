@@ -1,0 +1,52 @@
+#harmony automations mbt google assistant staan in harmony.yaml
+
+- alias: "Zonnepanelen vraag Google Assistant"
+  hide_entity: True
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.google_assistant_zonnepanelen
+      to: 'on'
+  action:
+    - delay: '00:00:2'
+    - service: tts.google_say
+      data_template:
+        entity_id: media_player.assistent
+        message: 'Vandaag is er {{ states.sensor.omvormer_vandaag_opgewekt.state | replace("."," komma ") }} kilowatt uur opgewekt. Het netto energieverbruik vandaag is: {{ states.sensor.netto_elektra.state | replace("."," komma ")}} kilowatt uur.'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.google_assistant_zonnepanelen
+
+- alias: "Temperatuur vraag Google Assistant"
+  hide_entity: True
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.google_assistant_temperatuur
+      to: 'on'
+  action:
+    - delay: '00:00:2'
+    - service: tts.google_say
+      data_template:
+        entity_id: media_player.assistent
+        message: 'De temperatuur in de woonkamer is {{ states.climate.thermostaat.attributes.current_temperature | replace("."," komma ") }} graden celcius. In de badkamer is het {{ states.sensor.temperature_badkamer.state | replace("."," komma ")}} graden celcius. Tenslotte de temperatuur in de babykamer. Deze is: {{ states.sensor.temperature_babykamer.state | replace("."," komma ") }} graden celcius'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.google_assistant_temperatuur
+
+- alias: "Welterusten door Google Assistant"
+  hide_entity: True
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.google_assistant_welterusten
+      to: 'on'
+  action:
+    - delay: '00:00:2'
+    - service: tts.google_say
+      data_template:
+        entity_id: media_player.assistent
+        message: 'Een hele fijne nacht toegewenst.'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.google_assistant_welterusten
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.alles_uit
+    

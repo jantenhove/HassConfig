@@ -1,0 +1,151 @@
+# Boiler schakeltijden, copy van boiler high
+- alias: 'Ventilatie uit bij boiler aan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    #- platform: time
+    #  minutes: '/1'
+    #  seconds: 00
+    - platform: state
+      entity_id: fan.mechanische_ventilatie  #when pv relais is switched, check if boiler is on
+    - platform: state
+      entity_id: switch.pv_relais
+      to: 'on'
+    - platform: numeric_state  
+      entity_id: sensor.boiler_huidig_verbruik
+      above: 50
+      for:
+        seconds: 10
+  condition:
+    condition: and
+    conditions:
+      - condition: template
+        value_template: '{{  states.fan.mechanische_ventilatie.state != "off" }}'
+      - condition: numeric_state
+        entity_id: sensor.boiler_huidig_verbruik
+        above: 50
+  action:    
+    - service: fan.turn_off
+      entity_id: fan.mechanische_ventilatie
+    - service: notify.jan
+      data:
+        title:  "Mechanische ventilatie uitgezet"
+        message: >
+          Mechanische ventilatie uitgezet want boiler staat aan
+
+#Ventilatie aan bij iemand thuis en buitentemp boven 15 graden en niemand slaapt en boiler uit
+- alias: 'Ventilatie auto stand 2'
+  initial_state: true 
+  hide_entity: False
+  trigger:
+    - platform: template
+      value_template: '{{ states.sensor.dark_sky_daytime_high_apparent_temperature.state | float  > 18 | float}}'   #outside perceived temp
+    - platform: state
+      entity_id:  input_boolean.iemand_slaapt
+      to: 'off'
+    - platform: state
+      entity_id:  group.aanwezigheid
+      to: 'on'
+    - platform: numeric_state  
+      entity_id: sensor.boiler_huidig_verbruik
+      below: 50
+      for:
+        seconds: 30
+    - platform: time_pattern
+      minutes: '/1'
+      seconds: 00
+  condition:
+    condition: and
+    conditions:     
+      - condition: state
+        entity_id: input_boolean.automatic_ventilation
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.bad_aan
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.iemand_slaapt
+        state: 'off'
+      - condition: state
+        entity_id: group.aanwezigheid
+        state: 'on'
+      - condition: template
+        value_template: '{{ states.sensor.dark_sky_daytime_high_apparent_temperature.state | float  > 15 | float}}'   #outside perceived temp
+      - condition: numeric_state
+        entity_id: sensor.boiler_huidig_verbruik
+        below: 50
+      - condition: or
+        conditions:  
+          - condition: template 
+            value_template: '{{ states.fan.mechanische_ventilatie.attributes.speed.lower() != "medium" }}'
+          - condition: state 
+            entity_id: fan.mechanische_ventilatie
+            state: 'off'
+  action:
+    - service: fan.set_speed
+      data:
+        entity_id: fan.mechanische_ventilatie
+        speed: "medium"
+    - service: notify.jan
+      data:
+        title:  "Mechanische ventilatie stand 2"
+        message: >
+          Max buitentemperatuur is: {{ states.sensor.dark_sky_daytime_high_apparent_temperature.state }} °C en er is iemand thuis en niemand slaapt.
+
+- alias: 'Ventilatie auto stand 1'
+  initial_state: true 
+  hide_entity: False
+  trigger:
+    - platform: template
+      value_template: '{{ states.sensor.dark_sky_daytime_high_apparent_temperature.state | float  < 15 | float}}'   #outside perceived temp
+    - platform: state
+      entity_id:  input_boolean.iemand_slaapt, input_boolean.bad_aan
+      to: 'on'
+    - platform: state
+      entity_id:  group.aanwezigheid
+      to: 'off'
+    - platform: numeric_state  
+      entity_id: sensor.boiler_huidig_verbruik
+      below: 50
+    - platform: time_pattern
+      minutes: '/1'
+      seconds: 00
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.automatic_ventilation
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.boiler_huidig_verbruik
+        below: 50
+      - condition: or
+        conditions:  
+          - condition: template 
+            value_template: '{{ states.fan.mechanische_ventilatie.attributes.speed.lower() != "low" }}'
+          - condition: state 
+            entity_id: fan.mechanische_ventilatie
+            state: 'off'
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: input_boolean.iemand_slaapt
+            state: 'on'
+          - condition: state
+            entity_id: group.aanwezigheid
+            state: 'off'
+          - condition: state
+            entity_id: input_boolean.bad_aan
+            state: 'on'
+          - condition: template
+            value_template: '{{ states.sensor.dark_sky_daytime_high_apparent_temperature.state | float  < 15 | float}}'   #outside perceived temp      
+  action:
+    - service: fan.set_speed
+      data:
+        entity_id: fan.mechanische_ventilatie
+        speed: "low"
+    - service: notify.jan
+      data:
+        title:  "Mechanische ventilatie stand 1"
+        message: >
+         Een van de voorwaarden voor ventilatie stand 2 is onwaar.

@@ -1,0 +1,224 @@
+#thuisdetectie gebaseerd op device_tracker en tasker 
+#om thuis te zijn is een van beiden nodig. Om weg te zijn moeten beiden off zijn
+#als de Wifi wegvalt of een ander AP wordt gebruikt zegt de device_tracker namelijk dat er niet thuis is
+#tasker zegt dit pas na de location te hebben verlaten.
+- alias: 'Jan weg detectie'
+  initial_state: true
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.jan_thuis
+        state: 'on' 
+      - condition: state
+        entity_id: device_tracker.jan
+        state: 'not_home'
+      - condition: state
+        entity_id: binary_sensor.telefoon_jan_thuis
+        state: 'off'
+  trigger:
+    - platform: state
+      entity_id: device_tracker.jan
+      to: 'not_home' 
+      for:
+        minutes: 5
+    - platform: state
+      entity_id: binary_sensor.telefoon_jan_thuis
+      to: 'off' 
+      for:
+        minutes: 5
+    - platform: homeassistant
+      event: start
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.jan_thuis
+
+- alias: 'Jan thuis detectie'
+  initial_state: true
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.jan_thuis
+        state: 'off'
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: device_tracker.jan
+            state: 'home'
+          - condition: state
+            entity_id: binary_sensor.telefoon_jan_thuis
+            state: 'on'
+  trigger:
+    - platform: state
+      entity_id: device_tracker.jan
+      to: 'home' 
+    - platform: state
+      entity_id: binary_sensor.telefoon_jan_thuis
+      to: 'on' 
+    - platform: homeassistant
+      event: start
+  action:
+     service: input_boolean.turn_on
+     entity_id: input_boolean.jan_thuis
+     
+- alias: 'Manon weg detectie'
+  initial_state: true
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.manon_thuis
+        state: 'on' 
+      - condition: state
+        entity_id: device_tracker.manon
+        state: 'not_home'
+      - condition: state
+        entity_id: binary_sensor.telefoon_manon_thuis
+        state: 'off'
+  trigger:
+    - platform: state
+      entity_id: device_tracker.manon
+      to: 'not_home' 
+      for:
+        minutes: 5
+    - platform: state
+      entity_id: binary_sensor.telefoon_manon_thuis
+      to: 'off' 
+      for:
+        minutes: 5
+    - platform: homeassistant
+      event: start
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.manon_thuis
+
+- alias: 'Manon thuis detectie'
+  initial_state: true
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.manon_thuis
+        state: 'off'
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: device_tracker.manon
+            state: 'home'
+          - condition: state
+            entity_id: binary_sensor.telefoon_manon_thuis
+            state: 'on'
+  trigger:
+    - platform: state
+      entity_id: device_tracker.manon
+      to: 'home' 
+    - platform: state
+      entity_id: binary_sensor.telefoon_manon_thuis
+      to: 'on' 
+    - platform: homeassistant
+      event: start
+  action:
+     service: input_boolean.turn_on
+     entity_id: input_boolean.manon_thuis
+     
+- alias: 'Alie weg detectie'
+  initial_state: true
+  condition:
+    condition: state
+    entity_id: input_boolean.alie_thuis
+    state: 'on'
+  trigger:
+    - platform: state
+      entity_id: device_tracker.alie
+      to: 'not_home' 
+      for:
+        minutes: 5
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.alie_thuis
+
+- alias: 'Alie thuis detectie'
+  initial_state: true
+  condition:
+    condition: state
+    entity_id: input_boolean.alie_thuis
+    state: 'off'
+  trigger:
+    - platform: state
+      entity_id: device_tracker.alie
+      to: 'home'  
+  action:
+     service: input_boolean.turn_on
+     entity_id: input_boolean.alie_thuis
+     
+     
+- alias: 'Iemand thuis melding'  
+  trigger:
+    - platform: event
+      event_type: state_changed
+      event_data:
+        entity_id: group.aanwezigheid
+  action:
+    - service: notify.jan
+      data:
+        title:  "{% if states.group.aanwezigheid.state == 'on' %}Iemand{% else %}Niemand{% endif %} thuis."
+        message: >
+          Telefoon Jan thuis: {% if states.input_boolean.jan_thuis.state != 'on'%}nee{% else %}ja{% endif %}
+          Telefoon Alie thuis: {% if states.input_boolean.alie_thuis.state != 'on'%}nee{% else %}ja{% endif %}
+          Telefoon Manon thuis: {% if states.input_boolean.Manon_thuis.state != 'on'%}nee{% else %}ja{% endif %}.
+
+
+- alias: 'Beweging beneden'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: sensor.beweging_woonkamer_achter_sensor_status, sensor.beweging_hal_sensor_status
+      to: "Motion"
+    - platform: state
+      entity_id: binary_sensor.fibaro_woonkamer_motion
+      to: 'on'
+  condition:
+    - condition: state
+      entity_id: input_boolean.beweging_beneden
+      state: 'off'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.beweging_beneden
+
+
+- alias: 'Geen beweging beneden'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: sensor.beweging_woonkamer_achter_sensor_status, sensor.beweging_hal_sensor_status
+      to: "No Motion"
+    - platform: state
+      entity_id: binary_sensor.fibaro_woonkamer_motion
+      to: 'off'
+  condition:
+    - condition: state
+      entity_id: input_boolean.beweging_beneden
+      state: 'on'
+    - condition: or
+      conditions:
+        - condition: state
+          entity_id: sensor.beweging_woonkamer_achter_sensor_status
+          state: 'No Motion'
+        - condition: state
+          entity_id: sensor.beweging_woonkamer_achter_sensor_status
+          state: 'unknown'
+    - condition: or
+      conditions:
+        - condition: state
+          entity_id: sensor.beweging_hal_sensor_status
+          state: 'No Motion'
+        - condition: state
+          entity_id: sensor.beweging_hal_sensor_status
+          state: 'unknown'
+    - condition: state
+      entity_id: binary_sensor.fibaro_woonkamer_motion
+      state: 'off'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.beweging_beneden

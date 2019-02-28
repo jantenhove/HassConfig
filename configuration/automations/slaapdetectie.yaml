@@ -1,0 +1,206 @@
+#test jan home and asleep, manon home and asleep
+- alias: 'Iedereen slaapt'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.telefoon_jan_aan_lader, binary_sensor.telefoon_manon_aan_lader
+      to: 'on'
+    - platform: time
+      at: '21:00:01' #also trigger when already in charger before 2100
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.iedereen_slaapt
+      state: 'off'
+    - condition: time
+      after: '21:00:00'
+      before: '08:00:00'    
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: input_boolean.jan_thuis
+        state: 'off'
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.telefoon_jan_aan_lader
+          state: 'on'
+        - condition: state
+          entity_id: input_boolean.jan_thuis
+          state: 'on'
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: input_boolean.manon_thuis
+        state: 'off'
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.telefoon_manon_aan_lader
+          state: 'on'
+        - condition: state
+          entity_id: input_boolean.manon_thuis
+          state: 'on'
+    - condition: or #someone home?
+      conditions:
+      - condition: state
+        entity_id: input_boolean.jan_thuis
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.jan_thuis
+        state: 'on'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: 
+        - input_boolean.iedereen_slaapt
+
+        
+- alias: 'Iemand slaapt'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.telefoon_jan_aan_lader, binary_sensor.telefoon_manon_aan_lader
+      to: 'on'
+    - platform: time
+      at: '21:00:01' #also trigger when already in charger before 2100
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.iemand_slaapt
+      state: 'off'
+    - condition: time
+      after: '21:00:00'
+      before: '08:00:00'
+    - condition: or
+      conditions:
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.telefoon_jan_aan_lader
+            state: 'on'
+          - condition: state
+            entity_id: input_boolean.jan_thuis
+            state: 'on'
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.telefoon_manon_aan_lader
+            state: 'on'
+          - condition: state
+            entity_id: input_boolean.manon_thuis
+            state: 'on'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: 
+        - input_boolean.iemand_slaapt
+        
+- alias: 'Jan slaapt niet'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.telefoon_jan_aan_lader
+      to: 'off'
+  condition:
+  - condition: state
+    entity_id: input_boolean.jan_thuis
+    state: 'on'   
+  action:
+  - service: input_boolean.turn_off
+    entity_id: 
+    - input_boolean.iedereen_slaapt 
+    
+- alias: 'Manon slaapt niet'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.telefoon_manon_aan_lader
+      to: 'off'
+  condition:
+  - condition: state
+    entity_id: input_boolean.manon_thuis
+    state: 'on'   
+  action:
+  - service: input_boolean.turn_off
+    entity_id: 
+    - input_boolean.iedereen_slaapt 
+    
+- alias: 'Niemand slaapt'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.telefoon_jan_aan_lader, binary_sensor.telefoon_manon_aan_lader
+      to: 'off'
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.iemand_slaapt
+      state: 'on'
+    - condition: and
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: input_boolean.jan_thuis
+          state: 'off'
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.telefoon_jan_aan_lader
+            state: 'off'
+          - condition: state
+            entity_id: input_boolean.jan_thuis
+            state: 'on'
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: input_boolean.manon_thuis
+          state: 'off'
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.telefoon_manon_aan_lader
+            state: 'off'
+          - condition: state
+            entity_id: input_boolean.manon_thuis
+            state: 'on'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: 
+        - input_boolean.iedereen_slaapt
+        - input_boolean.iemand_slaapt
+
+- alias: 'Slaap melding iedereen slaapt'  
+  initial_state: true
+  trigger:
+    - platform: event
+      event_type: state_changed
+      event_data:
+        entity_id: input_boolean.iedereen_slaapt 
+  action:
+    - service: notify.jan
+      data:
+        title:  "{% if states.input_boolean.iedereen_slaapt.state == 'on' %}Iedereen{% else %}Niet iedereen{% endif %}, die thuis is, slaapt."
+        message: >
+          Telefoon Jan thuis: {% if states.input_boolean.jan_thuis.state != 'on'%}nee{% else %}ja{% endif %}, telefoon Manon thuis: {% if states.input_boolean.Manon_thuis.state != 'on'%}nee{% else %}ja{% endif %}.
+          
+- alias: 'Slaap melding iemand slaapt'  
+  initial_state: true
+  trigger:
+    - platform: event
+      event_type: state_changed
+      event_data:
+        entity_id: input_boolean.iemand_slaapt
+  action:
+    - service: notify.jan
+      data:
+        title:  "{% if states.input_boolean.iemand_slaapt.state == 'on' %}Iemand{% else %}Niemand{% endif %}, die thuis is, slaapt."
+        message: >
+          Telefoon Jan thuis: {% if states.input_boolean.jan_thuis.state != 'on'%}nee{% else %}ja{% endif %}, telefoon Manon thuis: {% if states.input_boolean.Manon_thuis.state != 'on'%}nee{% else %}ja{% endif %}.

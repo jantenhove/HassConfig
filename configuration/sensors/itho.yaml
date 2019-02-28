@@ -1,0 +1,15 @@
+- platform: mqtt
+  name: Itho_Tijd
+  state_topic: "espItho/Itho/Timer"
+  value_template: "{{value}}"
+  unit_of_measurement: 's'
+- platform: mqtt
+  name : Itho_Snelheid
+  state_topic: "espItho/Itho/State"
+  value_template: >
+    {% if value|float==0 %}Standby{% endif %}
+    {% if value|float==1 %}Laag{% endif %}
+    {% if value|float==2 %}Medium{% endif %}
+    {% if value|float==3 %}Hoog{% endif %}
+    {% if value|float==4 %}Full{% endif %}
+    {% if value|float>=11 %}Hoog(T){% endif %}

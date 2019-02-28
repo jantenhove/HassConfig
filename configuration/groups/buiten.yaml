@@ -1,0 +1,26 @@
+buiten:
+  name: Buiten
+  view: yes
+  entities:
+    - group.scenes_buiten
+    - group.verlichting_buiten
+    - group.weer
+    - input_boolean.donker_buiten
+    
+scenes_buiten:
+  name: Scenes buiten
+  view: no
+  entities:
+    - scene.tuinverlichting_maximaal
+    - scene.tuinverlichting_gedimd
+
+weer:
+  name: Weer
+  view: no
+  entities:
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_apparent_temperature
+    - sensor.dark_sky_wind_speed
+    - sensor.dark_sky_summary
+    
+

@@ -1,0 +1,14 @@
+- name: Tuinverlichting gedimd
+  entities:
+    light.veranda:
+      state: on
+      brightness: 65
+    light.spotjes_tuin:
+      state: on
+      brightness: 85
+    light.lamp_achterdeur:
+      state: off
+    light.lamp_voordeur:
+     state: on
+     brightness: 75
+    

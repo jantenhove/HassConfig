@@ -1,0 +1,68 @@
+verbruik:
+  name: Verbruik
+  view: yes
+  entities:
+    - group.huidig_verbruik
+    - group.omvormer
+    - group.verbruik_vandaag
+    - group.kosten_vandaag
+    - group.boiler
+    - group.verbruik_grafieken
+    - weblink.grafana
+
+huidig_verbruik:
+  name: Huidig verbruik
+  view: no
+  entities:
+    - sensor.elektra_huidig_verbruik
+    - sensor.elektra_huidig_teruglevering
+    
+verbruik_vandaag:
+  name: Verbruik vandaag
+  view: no
+  entities:
+    - sensor.elektra_vandaag
+    - sensor.teruglevering_vandaag
+    - sensor.gas_vandaag
+
+kosten_vandaag:
+  name: Kosten vandaag
+  view: no
+  entities:
+    - sensor.elektra_kosten_vandaag
+    - sensor.gas_kosten_vandaag
+    - sensor.totaal_kosten_vandaag
+    - weblink.dsmr
+    
+boiler:
+  name: Boiler
+  view: no
+  entities:
+    - sensor.boiler_huidig_verbruik
+    - sensor.boiler_verbruik_vandaag
+    - sensor.boiler_voltage
+    - sensor.boiler_stroom
+ 
+verbruik_grafieken:
+  name: Verbruik grafieken
+  view: no
+  entities:
+    - camera.elektra
+    - camera.gas
+    
+omvormer:
+  name: Omvormer
+  view: no
+  entities:
+    - binary_sensor.omvormer_goodwe
+    - sensor.omvormer_vermogen
+    - sensor.omvormer_temperatuur
+    - sensor.omvormer_vandaag_opgewekt
+    - sensor.omvormer_voltage_string_1
+    - sensor.omvormer_stroom_string_1
+    - sensor.omvormer_voltage_string_2
+    - sensor.omvormer_stroom_string_2
+    - sensor.omvormer_voltage_net
+    - sensor.omvormer_stroom_net
+    - sensor.omvormer_frequentie_net
+  

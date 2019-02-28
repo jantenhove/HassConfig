@@ -1,0 +1,32 @@
+boiler_temperatuur:
+  name: Gewenste boiler temperatuur
+  min: 49
+  max: 62
+  step: 1
+
+boiler_high_temperatuur:
+  name: Boiler hoog temperatuur
+  min: 50
+  max: 62
+  step: 1
+
+
+ledstrip1_animatie_snelheid:
+  name: 'Ledstrip veranda snelheid'
+  min: 0
+  max: 255
+  step: 5
+
+ledstrip2_animatie_snelheid:
+  name: 'Ledstrip voor snelheid'
+  min: 0
+  max: 255
+  step: 5
+
+
+
+# ledstrips_animatie_snelheid_normaal:
+#   name: 'Ledstrips normale snelheid'
+#   min: 0
+#   max: 255
+#   step: 5

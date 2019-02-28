@@ -1,0 +1,87 @@
+klimaat:
+  name: Klimaat
+  view: yes
+  entities:
+    - group.ingesteld_temperatuur
+    - group.temperatuur_all
+    - group.lichtsterkte
+    - group.ventilatie
+    - group.temperatuur_advanced
+    - group.klimaat_advanced
+    
+ingesteld_temperatuur:
+    name: Ingestelde temperatuur
+    view: no
+    entities:
+      - climate.thermostaat
+      - input_number.boiler_temperatuur
+      
+temperatuur_all:
+  name: Temperaturen
+  view: no
+  entities:
+    - sensor.fibaro_woonkamer_temperatuur
+    - sensor.kamer_thermostaat
+    - sensor.woonkamer_bij_kachel_temperature
+    - sensor.boiler_temperatuur
+    - sensor.temperature_badkamer
+
+lichtsterkte:
+  name: Lichtsterkte
+  view: no
+  entities:
+    - sensor.fibaro_woonkamer_lichtsterkte
+
+ventilatie:
+  name: Ventilatie
+  view: no
+  entities:
+    - fan.mechanische_ventilatie
+    - sensor.itho_snelheid
+    - sensor.itho_tijd
+    - input_boolean.automatic_ventilation    
+    
+temperatuur_advanced:
+  name: CV ketel geavanceerd
+  view: no
+  entities:
+    - sensor.cv_retour_temperatuur
+    - sensor.cv_ketel_boiler_temperatuur
+    - sensor.cv_heet_water_temperatuur
+    - sensor.cv_buitentemperatuur
+    - binary_sensor.vlam_ketel
+    - binary_sensor.verwarming_aan
+    - binary_sensor.heet_water_aan
+    - binary_sensor.cv_verwarming
+    - binary_sensor.heet_water_enabled
+    - sensor.cv_modulatie
+    - sensor.cv_control_setpoint
+    - sensor.cv_heet_water_setpoint
+    - sensor.cv_verwarming_setpoint
+    - sensor.cv_fout_status
+    - sensor.cv_power_mode
+
+klimaat_advanced:
+  name: Klimaat geavanceerd
+  view: no
+  entities:
+    - input_boolean.handdoek_radiator_auto
+    - switch.alleen_boven_verwarmen
+    - input_number.boiler_high_temperatuur
+    - input_boolean.force_water_heating
+    - input_boolean.boiler_verwarming
+    - switch.boiler_aan_uit
+    - switch.cv_pomp_aan_ot
+    - switch.klep_verwarming_boiler
+    - switch.pv_relais
+    - switch.handoekradiator
+    - input_boolean.douche_aan
+    - input_boolean.bad_aan
+    - binary_sensor.houtkachel_aan
+    - sensor.woonkamer_bij_kachel_humidity
+    - sensor.luchtvochtigheid_badkamer
+    - sensor.boiler_temperatuur
+    - sensor.boiler_in_water_temperatuur
+    - sensor.boiler_uit_water_temperatuur
+    - sensor.boiler_verwarming_in_temperatuur
+    - sensor.boiler_verwarming_uit_temperatuur

@@ -1,0 +1,111 @@
+- alias: Deurbel aan
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: switch.deurbel
+    to: 'on'
+  action:
+    - service: downloader.download_file
+      data_template:
+        url: "http://192.168.2.100:8123{{ states.camera.voordeur.attributes.entity_picture }}"
+        filename: "voordeur.jpg"
+        overwrite: true
+    - service: mqtt.publish
+      data:
+        topic: "home_assistant/state/doorbell"
+        payload_template: "true"
+    - delay:
+        milliseconds: 600 #delay needed since download is async. We could use file_url iin notification, but we dont see a preview then in pushbullet
+    - service: notify.pushbullet
+      data:
+        title: "Er wordt aangebeld"
+        message: "De bel gaat"    
+        data:
+          file: /tmp/voordeur.jpg
+    - service: notify.jan
+      data:
+        title: "Er wordt aangebeld"
+        message: "De bel gaat. Live beeld: https://thuis.outside-url.com/states/group.beveiliging"    
+        data:
+          photo:
+            - file: /tmp/voordeur.jpg
+              caption: Voordeur        
+
+- alias: Jan thuis extra geluid van bel
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: switch.deurbel
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.jan_thuis
+    state: 'on' 
+  action:
+    - service: rest_command.autoremote_doorbell_jan
+   
+- alias: Manon thuis extra geluid van bel
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: switch.deurbel
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.manon_thuis
+    state: 'on' 
+  action:
+    - service: rest_command.autoremote_doorbell_manon
+  
+- alias: Deurbel, voordeur lamp feller
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: switch.deurbel
+      to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.donker_buiten
+    state: 'on' 
+  action:
+    - event: temporary_change
+      event_data:
+        entity_id: light.lamp_voordeur
+        temporary_start: 1
+        brightness: 255
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_voor
+        temporary_start: 1
+        brightness: 250
+        effect: 'Color Wipe Inverse'
+    - delay: '00:00:09'
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_voor
+        temporary_start: 0
+
+- alias: Deurbel, voordeur lamp terug
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: switch.deurbel
+      to: 'off'
+      for: 
+        minutes: 1
+  condition:
+  - condition: state
+    entity_id: input_boolean.donker_buiten
+    state: 'on'
+  - condition: state
+    entity_id: binary_sensor.voordeur_contact
+    state: 'off'     
+  action:
+    - event: temporary_change
+      event_data:
+        entity_id: light.lamp_voordeur
+        temporary_start: 0
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_voor
+        temporary_start: 0

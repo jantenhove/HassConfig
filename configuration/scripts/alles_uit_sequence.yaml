@@ -1,0 +1,20 @@
+alles_uit:
+  alias: Alles uit
+  sequence:
+    - service: automation.trigger
+      entity_id: automation.buitenverlichting_deur_terug_van_max #reset naar vorige staat als ze vol aan staan.
+    - service: light.turn_off
+      entity_id: light.lamp_keuken, light.lampjes_kast, light.lamp_stoel, light.lamp_hoek
+    - service: switch.turn_off
+      entity_id: switch.kerstverlichting
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.harmony
+        option: "PowerOff"
+    - delay:
+        seconds: 30
+    - service: light.turn_off
+      entity_id: light.eettafel, light.zithoek, light.veranda, light.spotjes_tuin, light.lamp_achterdeur, light.av_apparatuur
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.ledstrips_aan
+      #light voordeur stays on

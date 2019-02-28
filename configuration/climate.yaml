@@ -1,0 +1,60 @@
+- platform: mqtt
+  name: Thermostaat
+  current_temperature_topic: events/otgw/otgw/roomtemperature
+  temperature_command_topic: actions/otgw/setpoint
+  temperature_state_topic: events/otgw/otgw/setpoint
+  modes:
+   - auto
+  min_temp: 15
+  max_temp: 21
+  #target_temp: 18
+  #cold_tolerance: 0.3
+
+- platform: generic_thermostat
+  name: Badkamer
+  heater: switch.badkamer_verwarmen
+  target_sensor: sensor.temperature_badkamer
+  min_temp: 15
+  max_temp: 21
+  ac_mode: False
+  target_temp: 19.5
+  cold_tolerance: 0.1
+  hot_tolerance: 0.1
+  min_cycle_duration:
+    minutes: 5
+  initial_operation_mode: "auto"
+  away_temp: 16
+  
+- platform: generic_thermostat
+  name: Babykamer
+  heater: switch.babykamer_verwarmen
+  target_sensor: sensor.temperature_babykamer
+  min_temp: 15
+  max_temp: 21
+  ac_mode: False
+  target_temp: 18
+  cold_tolerance: 0.2
+  hot_tolerance: 0.2
+  min_cycle_duration:
+    minutes: 5
+  keep_alive:
+    minutes: 3
+  initial_operation_mode: "auto"
+  away_temp: 17
+  
+- platform: generic_thermostat
+  name: Beneden
+  heater: switch.beneden_verwarmen
+  target_sensor: sensor.kamer_thermostaat
+  min_temp: 15
+  max_temp: 21
+  ac_mode: False
+  target_temp: 18
+  cold_tolerance: 0
+  hot_tolerance: 0.3
+  min_cycle_duration:
+   minutes: 15
+  keep_alive:
+    minutes: 3
+  initial_operation_mode: "auto"
+  away_temp: 15

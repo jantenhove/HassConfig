@@ -1,0 +1,130 @@
+ #schakelt de buitenverlichting switch op basis van omvormer vermogen of tijd (als de omvormer offline is)
+ #LET OP: Schakelt niet de buitenverlichting zelf, alleen de input boolean
+
+ #auto turn off omvormer na geen data
+- alias: Omvormer auto uit bij geen data
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      minutes: '/5'
+      seconds: 00
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id:  binary_sensor.omvormer_goodwe
+      state: 'on'
+    - condition: numeric_state
+      entity_id: sensor.omvormer_vermogen
+      above: 0 
+    - condition: template
+      value_template: '{{ (as_timestamp(now())-as_timestamp(states.sensor.omvormer_vermogen.last_updated)) > 300 }}' #5 minutes
+  action:
+    - service: mqtt.publish
+      data:
+        topic: "goodwe/93600DSN171W0235/online"
+        payload: "0"
+    - service: notify.jan
+      data:
+        title:  "Omvormer offline"
+        message: "Laatste update van omvormer vermogen was om {{ states.sensor.omvormer_vermogen.last_updated }}."
+
+# Licht buiten als de movormer uit is en na sunset of als het vermogen van de omvormer onder de 40W is
+- alias: 'Donker buiten'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      minutes: '/5'
+      seconds: 00
+    - platform: state
+      entity_id: binary_sensor.omvormer_goodwe
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.donker_buiten
+        state: 'off'
+      - condition: template
+        value_template: '{{ (as_timestamp(now())-as_timestamp(states.input_boolean.donker_buiten.last_updated)) > 1800 }}' #30 minutes
+      - condition: or
+        conditions:
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.omvormer_goodwe
+                state: 'off'
+              - condition: state
+                entity_id: sun.sun
+                state: 'below_horizon'
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.omvormer_goodwe
+                state: 'on'
+              - condition: numeric_state
+                entity_id: sensor.omvormer_vermogen
+                below: 40
+              - condition: numeric_state
+                entity_id: sensor.omvormer_vermogen
+                above: 0
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.donker_buiten
+     
+ # Niet donker buiten als de movormer uit is en na sunriseo of als het vermogen van de omvormer boven de 50W is
+- alias: 'Licht buiten'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      minutes: '/5'
+      seconds: 00
+    - platform: event
+      event_type: state_changed
+      event_data:
+        entity_id: binary_sensor.omvormer_goodwe
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.donker_buiten
+        state: 'on'
+      - condition: template
+        value_template: '{{ (as_timestamp(now())-as_timestamp(states.input_boolean.donker_buiten.last_updated)) > 1800 }}' #30 minutes
+      - condition: or
+        conditions:
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.omvormer_goodwe
+                state: 'off'
+              - condition: state
+                entity_id: sun.sun
+                state: 'above_horizon'
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.omvormer_goodwe
+                state: 'on'
+              - condition: numeric_state
+                entity_id: sensor.omvormer_vermogen
+                above: 40
+  action:
+    service: input_boolean.turn_off
+    entity_id: input_boolean.donker_buiten 
+  
+
+- alias: 'Donker buiten melding'  
+  initial_state: true
+  trigger:
+    - platform: event
+      event_type: state_changed
+      event_data:
+        entity_id: input_boolean.donker_buiten 
+  action:
+    - service: notify.jan
+      data:
+        title:  "{% if states.input_boolean.donker_buiten.state == 'on' %}Donker{% else %}Niet donker{% endif %} buiten."
+        message: "{% if states.input_boolean.donker_buiten.state == 'on' %}Vandaag opgewekt: {{ states.sensor.omvormer_vandaag_opgewekt.state }}kWh{% else %}Omvormer vermogen: {{states.sensor.omvormer_vermogen.state}}W{% endif %}."

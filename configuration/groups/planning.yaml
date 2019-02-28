@@ -1,0 +1,12 @@
+planning:
+  name: Planning
+  view: yes
+  entities:
+    - group.kalender
+
+kalender:
+  name: Gezamelijke kalender
+  view: no
+  entities:
+    - sensor.volgende_gezamelijke_afspraak
+    

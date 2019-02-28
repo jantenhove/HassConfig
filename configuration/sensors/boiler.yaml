@@ -1,0 +1,83 @@
+- platform: mqtt
+  name: "Boiler verbruik vandaag"
+  state_topic: "boiler/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Today"] }}'
+  unit_of_measurement: "kWh"
+- platform: mqtt
+  name: "Boiler huidig verbruik"
+  state_topic: "boiler/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Power"] }}'
+  unit_of_measurement: "W"
+- platform: mqtt
+  name: "Boiler voltage"
+  state_topic: "boiler/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Voltage"] }}'
+  unit_of_measurement: "V"
+- platform: mqtt
+  name: "Boiler stroom"
+  state_topic: "boiler/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Current"] }}'
+  unit_of_measurement: "A"
+- platform: mqtt
+  name: "Boiler Verbruik totaal"
+  state_topic: "boiler/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Total"] }}'
+  unit_of_measurement: "kWh"
+
+- platform: mqtt
+  name: "Boiler temperatuur ruw"
+  state_topic: "boilerControl/temperatures/28ff1784118127"
+  unit_of_measurement: '°C'
+  device_class: temperature
+  
+- platform: mqtt
+  name: "Boiler IN water temperatuur"
+  state_topic: "boilerControl/temperatures/28ff598411816c"
+  unit_of_measurement: '°C'
+  device_class: temperature
+   
+- platform: mqtt
+  name: "Boiler UIT water temperatuur"
+  state_topic: "boilerControl/temperatures/28ff85a0201748f"
+  unit_of_measurement: '°C'
+  device_class: temperature
+
+- platform: mqtt
+  name: "Boiler verwarming IN temperatuur"
+  state_topic: "boilerControl/temperatures/28ff22c20173d5"
+  unit_of_measurement: '°C'
+  device_class: temperature
+
+- platform: mqtt
+  name: "Boiler verwarming UIT temperatuur"
+  state_topic: "boilerControl/temperatures/28ffffa41181c4"
+  unit_of_measurement: '°C'
+  device_class: temperature
+  
+- platform: statistics
+  name: stats_boiler_in_temp
+  entity_id: sensor.boiler_in_water_temperatuur
+  max_age:
+    minutes: 5
+  sampling_size: 300
+  
+- platform: statistics
+  name: stats_boiler_uit_temp
+  entity_id: sensor.boiler_uit_water_temperatuur
+  max_age:
+    minutes: 5
+  sampling_size: 300
+
+- platform: statistics
+  name: stats_boiler_temp
+  entity_id: sensor.boiler_temperatuur
+  max_age:
+    minutes: 5
+  sampling_size: 300
+
+- platform: template
+  sensors:
+    boiler_temperatuur:
+        value_template: "{{ states.sensor.boiler_temperatuur_ruw.state | float + 3.5 }}"
+        friendly_name: "Boiler temperatuur"
+        unit_of_measurement: "°C"

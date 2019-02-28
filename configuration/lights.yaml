@@ -1,0 +1,238 @@
+- platform: limitlessled
+  bridges:
+    - host: 192.168.2.135
+      port: 8899
+      version: 5
+      groups:
+      - number: 1
+        type: white
+        name: Lampjes kast
+
+- platform: rfxtrx
+  automatic_add: True
+  devices:
+    0b110001009e7b6e02000060:
+      name: Lamp stoel
+    0b1100100009172901010fc0:
+      name: Lamp keuken
+    0b11010501070b3308010fc0:
+      name: Lamp achterdeur
+    0b1100070106130606010fc0:
+      name: Lamp voordeur
+    0b1100090303050203010fc0:
+      name: AV apparatuur
+    0b11000b0300090301010fc0:
+      name: Kerstboom
+    0b11001302050c04010100c0:
+      name: Lamp berging
+    0b11000337bc0cfe07010f70:
+      name: Lamp hoek
+    
+- platform: mqtt
+  schema: json
+  name: "Ledstrip veranda"
+  state_topic: "home/LedStrip1_ha/state/out"
+  command_topic: "home/LedStrip1_ha/state/in"
+  #on_command_type: 'last'
+  effect: true
+  effect_list:
+    - "Static"
+    - "Blink"
+    - "Breath"
+    - "Color Wipe"
+    - "Color Wipe Inverse"
+    - "Color Wipe Reverse"
+    - "Color Wipe Reverse Inverse"
+    - "Color Wipe Random"
+    - "Random Color"
+    - "Single Dynamic"
+    - "Multi Dynamic"
+    - "Rainbow"
+    - "Rainbow Cycle"
+    - "Scan"
+    - "Dual Scan"
+    - "Fade"
+    - "Theater Chase"
+    - "Theater Chase Rainbow"
+    - "Running Lights"
+    - "Twinkle"
+    - "Twinkle Random"
+    - "Twinkle Fade"
+    - "Twinkle Fade Random"
+    - "Sparkle"
+    - "Flash Sparkle"
+    - "Hyper Sparkle"
+    - "Strobe"
+    - "Strobe Rainbow"
+    - "Multi Strobe"
+    - "Blink Rainbow"
+    - "Chase White"
+    - "Chase Color"
+    - "Chase Random"
+    - "Chase Rainbow"
+    - "Chase Flash"
+    - "Chase Flash Random"
+    - "Chase Rainbow White"
+    - "Chase Blackout"
+    - "Chase Blackout Rainbow"
+    - "Color Sweep Random"
+    - "Running Color"
+    - "Running Red Blue"
+    - "Running Random"
+    - "Larson Scanner"
+    - "Comet"
+    - "Fireworks"
+    - "Fireworks Random"
+    - "Merry Christmas"
+    - "Fire Flicker"
+    - "Fire Flicker (soft)"
+    - "Fire Flicker (intense)"
+    - "Dutch Flag"
+    - "Halloween"
+    - "Bicolor Chase"
+    - "Tricolor Chase"
+    - "ICU"
+    - "Custom"
+  brightness: true
+  color_temp: true
+  rgb: true
+  optimistic: false
+  qos: 0
+  retain: true
+
+- platform: mqtt
+  schema: json
+  name: "Ledstrip voor"
+  state_topic: "home/LedStrip2_ha/state/out"
+  command_topic: "home/LedStrip2_ha/state/in"
+  #on_command_type: 'first'
+  effect: true
+  effect_list:
+    - "Static"
+    - "Blink"
+    - "Breath"
+    - "Color Wipe"
+    - "Color Wipe Inverse"
+    - "Color Wipe Reverse"
+    - "Color Wipe Reverse Inverse"
+    - "Color Wipe Random"
+    - "Random Color"
+    - "Single Dynamic"
+    - "Multi Dynamic"
+    - "Rainbow"
+    - "Rainbow Cycle"
+    - "Scan"
+    - "Dual Scan"
+    - "Fade"
+    - "Theater Chase"
+    - "Theater Chase Rainbow"
+    - "Running Lights"
+    - "Twinkle"
+    - "Twinkle Random"
+    - "Twinkle Fade"
+    - "Twinkle Fade Random"
+    - "Sparkle"
+    - "Flash Sparkle"
+    - "Hyper Sparkle"
+    - "Strobe"
+    - "Strobe Rainbow"
+    - "Multi Strobe"
+    - "Blink Rainbow"
+    - "Chase White"
+    - "Chase Color"
+    - "Chase Random"
+    - "Chase Rainbow"
+    - "Chase Flash"
+    - "Chase Flash Random"
+    - "Chase Rainbow White"
+    - "Chase Blackout"
+    - "Chase Blackout Rainbow"
+    - "Color Sweep Random"
+    - "Running Color"
+    - "Running Red Blue"
+    - "Running Random"
+    - "Larson Scanner"
+    - "Comet"
+    - "Fireworks"
+    - "Fireworks Random"
+    - "Merry Christmas"
+    - "Fire Flicker"
+    - "Fire Flicker (soft)"
+    - "Fire Flicker (intense)"
+    - "Dutch Flag"
+    - "Halloween"
+    - "Bicolor Chase"
+    - "Tricolor Chase"
+    - "ICU"
+  brightness: true
+  color_temp: true
+  rgb: true
+  optimistic: false
+  qos: 0
+  retain: true
+
+- platform: mqtt
+  schema: json
+  name: "Ledstrips normaal"
+  command_topic: "home_assistant/ledStrip/command"
+  brightness: true
+  color_temp: true
+  rgb: true
+  effect: true
+  effect_list:
+    - "Static"
+    - "Blink"
+    - "Breath"
+    - "Color Wipe"
+    - "Color Wipe Inverse"
+    - "Color Wipe Reverse"
+    - "Color Wipe Reverse Inverse"
+    - "Color Wipe Random"
+    - "Random Color"
+    - "Single Dynamic"
+    - "Multi Dynamic"
+    - "Rainbow"
+    - "Rainbow Cycle"
+    - "Scan"
+    - "Dual Scan"
+    - "Fade"
+    - "Theater Chase"
+    - "Theater Chase Rainbow"
+    - "Running Lights"
+    - "Twinkle"
+    - "Twinkle Random"
+    - "Twinkle Fade"
+    - "Twinkle Fade Random"
+    - "Sparkle"
+    - "Flash Sparkle"
+    - "Hyper Sparkle"
+    - "Strobe"
+    - "Strobe Rainbow"
+    - "Multi Strobe"
+    - "Blink Rainbow"
+    - "Chase White"
+    - "Chase Color"
+    - "Chase Random"
+    - "Chase Rainbow"
+    - "Chase Flash"
+    - "Chase Flash Random"
+    - "Chase Rainbow White"
+    - "Chase Blackout"
+    - "Chase Blackout Rainbow"
+    - "Color Sweep Random"
+    - "Running Color"
+    - "Running Red Blue"
+    - "Running Random"
+    - "Larson Scanner"
+    - "Comet"
+    - "Fireworks"
+    - "Fireworks Random"
+    - "Merry Christmas"
+    - "Fire Flicker"
+    - "Fire Flicker (soft)"
+    - "Fire Flicker (intense)"
+    - "Circus Combustus"
+    - "Halloween"
+    - "Bicolor Chase"
+    - "Tricolor Chase"
+    - "ICU"

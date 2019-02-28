@@ -1,0 +1,58 @@
+beveiliging:
+  name: Beveiliging
+  view: yes
+  entities:
+    - group.camera
+    - group.aanwezigheid
+    - group.beweging_beneden
+    - group.deuren
+    - group.slaap_detectie
+    - switch.deurbel
+ 
+beweging_beneden:
+  name: Beweging beneden 
+  view: no
+  entities:
+    - binary_sensor.fibaro_woonkamer_motion
+    - sensor.beweging_woonkamer_achter_sensor_status
+    - sensor.beweging_hal_sensor_status
+    - input_boolean.beweging_beneden_afgelopen_half_uur
+
+aanwezigheid:
+  name: Aanwezigheid
+  view: no
+  entities:
+    #- device_tracker.jan
+    #- device_tracker.manon
+    - input_boolean.jan_thuis
+    - input_boolean.manon_thuis
+    - input_boolean.alie_thuis
+
+deuren:
+  name: Deuren en ramen
+  view: no
+  entities:
+    -  binary_sensor.achterdeur_contact
+    -  binary_sensor.voordeur_contact
+    -  binary_sensor.schuurdeur_contact
+    -  binary_sensor.door_window_sensor_158d000237c676
+    -  binary_sensor.door_window_sensor_158d000232a9f8
+
+slaap_detectie:
+  name: Telefoons aan lader
+  view: no
+  entities:
+    - input_boolean.iemand_slaapt
+    - input_boolean.iedereen_slaapt
+    - binary_sensor.telefoon_jan_aan_lader
+    - binary_sensor.telefoon_manon_aan_lader
+
+camera:
+  name: Camera's
+  view: no
+  entities:
+    - camera.voordeur
+    - camera.achterdeur
+    - switch.voordeur_state
+    - switch.achterdeur_state
+    - weblink.zoneminder

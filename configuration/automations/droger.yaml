@@ -1,0 +1,49 @@
+- alias: 'Droger aan check'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.droger_verbruik
+      above: 20
+      for: 
+        minutes: 3
+  condition:
+    - condition: state
+      entity_id: input_boolean.droger_bezig
+      state: 'off'  
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.droger_bezig
+
+- alias: 'Droger uit check'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.droger_verbruik
+      below: 20
+      for: 
+        minutes: 3
+  condition:
+    - condition: state
+      entity_id: input_boolean.droger_bezig
+      state: 'on'  
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.droger_bezig
+
+- alias: 'Droger aan/uit melding'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.droger_bezig
+  action:  
+    - service: notify.jan
+      data:
+        title:  "Droger staat {{ states.input_boolean.droger_bezig.state }}"
+        message:  "Droger staat aan/uit gewijzigd"
+    # - service: tts.google_say
+    #   data:
+    #     entity_id: media_player.assistent
+    #     message: 'De droger is klaar. Heel veel succes met uitruimen.'

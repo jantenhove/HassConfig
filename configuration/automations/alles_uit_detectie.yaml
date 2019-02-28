@@ -1,0 +1,109 @@
+ #alles aan bij beweging en alles uit langer aan als 2 minuten
+- alias: 'Alles aan bij opstaan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.iedereen_slaapt, input_boolean.iemand_slaapt
+      to: 'off'
+  condition:
+    - condition: time
+      after: '05:00:00'
+      before: '10:00:00'
+    - condition: state
+      entity_id: input_boolean.alles_uit
+      state: 'on'
+  action:    
+    - service: notify.jan
+      data:
+        title:  "Opstaan. Alles aanzetten"
+        message:  "Alles aan, want niet iedereen slaapt"
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.alles_uit
+
+- alias: 'Alles aan bij beweging/deur'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.beweging_beneden, binary_sensor.deur_benenden_open
+      to: 'on'
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.alles_uit
+      state: 'on'
+    - condition: template
+      value_template: '{{ (as_timestamp(now())-as_timestamp(states.input_boolean.alles_uit.last_updated)) > 120 }}' #2 minutes
+  action:
+    service: input_boolean.turn_off
+    entity_id: input_boolean.alles_uit
+
+#alles uit bij geen beweging, of geen aanwezigheid
+# - alias: 'Alles auto uit'
+#   initial_state: true
+#   hide_entity: False
+#   trigger:
+#     - platform: state
+#       entity_id: input_boolean.iedereen_slaapt
+#       to: 'on'
+#     - platform: state
+#       entity_id:  group.aanwezigheid
+#       to: 'off'
+#   condition:
+#     condition: and
+#     conditions:
+#     - condition: state
+#       entity_id: input_boolean.alles_uit
+#       state: 'off'
+#   action:
+#     service: input_boolean.turn_on
+#     entity_id: input_boolean.alles_uit
+
+- alias: 'Alles auto uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.beweging_beneden_afgelopen_half_uur
+      to: 'off'
+    - platform: state
+      entity_id:  group.aanwezigheid
+      to: 'off'
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.alles_uit
+      state: 'off'
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: group.aanwezigheid
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.iedereen_slaapt
+        state: 'on'
+    - condition: state
+      entity_id: input_boolean.beweging_beneden_afgelopen_half_uur
+      state: 'off'
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.alles_uit
+
+- alias: Alles uit met knoppen
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: event
+      event_type: zwave.scene_activated
+      event_data:
+        entity_id: zwave.fibaro_dimmer_2_zithoek
+        scene_id: 25
+    - platform: event
+      event_type: button_pressed
+      event_data: {"entity_id": "switch.afstandsbediening_wit_knop_1", "state" : "group off"}
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.alles_uit

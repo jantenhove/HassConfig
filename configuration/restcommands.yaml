@@ -1,0 +1,23 @@
+autoremote_doorbell_jan:
+  url: !secret autoremote_doorbell_jan_secret
+
+autoremote_doorbell_manon:
+  url:  !secret autoremote_doorbell_manon_secret
+
+autoremote_alarm_triggered_jan:
+  url:  !secret autoremote_alarm_triggered_jan_secret
+
+autoremote_alarm_disarmed_jan:
+  url:  !secret autoremote_alarm_disarmed_jan_secret
+
+camera_voordeur_motion_enable:
+  url: 'http://192.168.2.100:7999/1/detection/start'
+
+camera_voordeur_motion_disable:
+  url: 'http://192.168.2.100:7999/1/detection/pause'
+
+camera_achterdeur_motion_enable:
+  url: 'http://192.168.2.100:7999/2/detection/start'
+
+camera_achterdeur_motion_disable:
+  url: 'http://192.168.2.100:7999/2/detection/pause'

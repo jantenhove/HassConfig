@@ -1,0 +1,561 @@
+# Check of cv pomp niet  vanzelf aan gaat
+- alias: 'Check cv pomp'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: numeric_state  
+      entity_id: sensor.cv_buitentemperatuur
+      below: 0
+      for:
+        minutes: 2
+  condition:
+    - condition: state
+      entity_id: switch.cv_pomp_aan_ot
+      state: 'off'    
+  action:
+    - service: switch.turn_off
+      entity_id: switch.cv_pomp_aan_ot
+    - service: notify.jan
+      data:
+        title:  "CV pomp stond aan terwijl dit niet nodig was"
+        message: "Buitentemp van CV ketel was onder nul, maar cv pomp switch stond op off"
+          
+# - alias: 'Vloerverwarming wens aan bij lage temp'
+#   initial_state: true
+#   hide_entity: False
+#   trigger:
+#     - platform: time
+#       seconds: '/60' 
+#   condition:
+#     - condition: and
+#       conditions:
+#         - condition: or
+#           conditions:
+#             - condition: and
+#               conditions:
+#                 - condition: numeric_state
+#                   entity_id: sensor.temperature_badkamer
+#                   below: 19.5
+#                 - condition: time
+#                   after: '04:00:00'
+#                   before: '23:00:00'
+#             - condition: numeric_state
+#               entity_id: sensor.temperature_babykamer
+#               below: 16        
+#         - condition: state
+#           entity_id: input_boolean.boiler_verwarming
+#           state: 'off'
+#         - condition: state
+#           entity_id: group.aanwezigheid
+#           state: 'on'
+#         #if temp rises today above 19, then no floor heating
+#         #low temp needs to be below 10
+#         - condition: numeric_state
+#           entity_id: sensor.dark_sky_daytime_high_apparent_temperature_0
+#           below: 20
+#         - condition: numeric_state
+#           entity_id:  sensor.dark_sky_overnight_low_apparent_temperature_0
+#           below: 10
+#   action:    
+#     - service: input_boolean.turn_on
+#       entity_id: input_boolean.boiler_verwarming
+#     - service: notify.jan
+#       data:
+#         title:  "Vloerverwarming aangezet"
+#         message: >
+#           Vloerverwarming aangezet
+
+
+# - alias: 'Vloerverwarming wens auto uit' #uit bij bereikte temp
+#   initial_state: true
+#   hide_entity: False
+#   trigger:
+#     - platform: time
+#       seconds: '/60' 
+#   condition:
+#     condition: and
+#     conditions:
+#       - condition: state
+#         entity_id: input_boolean.boiler_verwarming
+#         state: 'on'
+#       - condition: and
+#         conditions:
+#           - condition: or
+#             conditions:
+#               - condition: numeric_state
+#                 entity_id: sensor.temperature_badkamer
+#                 above: 19.5
+#               - condition: time
+#                 after: '23:00:00'
+#                 before: '04:00:00' 
+#           - condition: numeric_state
+#             entity_id: sensor.temperature_babykamer
+#             above: 16
+#   action:    
+#     - service: input_boolean.turn_off
+#       entity_id: input_boolean.boiler_verwarming
+#     - service: notify.jan
+#       data:
+#         title:  "Vloerverwarming op temperatuur"
+#         message: >
+#           Vloerverwarming uitzetten
+
+- alias: 'Vloerverwarming verwarmen aan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: template
+      value_template: '{{ states.sensor.boiler_temperatuur.state | float > states.input_number.boiler_temperatuur.attributes.min | float }}' #only when boiler is at min temp
+    - platform: state
+      entity_id:  input_boolean.boiler_verwarming
+      to: 'on'
+    - platform: state
+      entity_id: binary_sensor.cv_verwarming
+      to: 'off'
+      for:
+        minutes: 15 #30 minuten cv uit ->vloerverarming
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_boolean.boiler_verwarming
+        state: 'on'
+      - condition: numeric_state
+        entity_id:  sensor.boiler_temperatuur
+        below: 58 #pv relais does not work above
+      - condition: state
+        entity_id: binary_sensor.cv_verwarming
+        state: 'off'
+      - condition: template
+        value_template: '{{ states.sensor.boiler_temperatuur.state | float > states.input_number.boiler_temperatuur.attributes.min | float }}' #only when boiler is at min temp
+  action:    
+    - service: switch.turn_on
+      entity_id: switch.cv_pomp_aan_ot
+    - service: switch.turn_on
+      entity_id: switch.pv_relais
+    - service: notify.jan
+      data:
+        title:  "Boiler verwarming aangezet"
+        message: >
+         Cv pomp aangezet
+
+- alias: 'Boven verwarmen uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.cv_verwarming, switch.alleen_boven_verwarmen, input_boolean.boiler_verwarming
+    - platform: time_pattern
+      minutes: '/15' 
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: switch.cv_pomp_aan_ot
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: input_boolean.boiler_verwarming
+          state: 'off'
+        - condition: numeric_state
+          entity_id: sensor.boiler_huidig_verbruik
+          below: 10
+        - condition: state
+          entity_id: binary_sensor.cv_verwarming
+          state: 'on'
+        - condition: state
+          entity_id: switch.alleen_boven_verwarmen
+          state: 'off'
+        - condition: template
+          value_template: '{{ states.sensor.boiler_temperatuur.state | float < states.input_number.boiler_temperatuur.attributes.min | float }}' #only when boiler is at min temp
+  action:    
+    - service: switch.turn_off
+      entity_id: switch.cv_pomp_aan_ot
+    - service: switch.turn_off
+      entity_id: switch.pv_relais
+    # - service: input_boolean.turn_off
+    #   entity_id: input_boolean.boiler_verwarming
+    
+    #- service: switch.turn_off
+    #  entity_id: switch.klep_verwarming_boiler
+    - service: notify.jan
+      data:
+        title:  "Boiler cv pomp uitgezet"
+        message: >
+          CV pomp uitgezet
+
+- alias: 'Houtkachel aan/uit melding'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.houtkachel_aan
+  action:  
+    - service: notify.jan
+      data:
+        title:  "Houtkachel staat {{ states.binary_sensor.houtkachel_aan.state }}"
+        message:  "Houtkachel aan/uit gewijzigd"
+
+- alias: 'CV temp instellen voor wekker'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      seconds: '/60'
+  condition:
+    - condition: time
+      after: '05:00:00'
+      before: '10:00:00'
+    - condition: numeric_state
+      entity_id: sensor.dark_sky_daytime_high_apparent_temperature_0
+      below: 18.0
+    - condition: or
+      conditions:
+      - condition: template #check uur voor wekker jan
+        value_template: '{{ (strptime(states.sensor.tijd_wekker_jan.state, "%H%M")) == ((as_timestamp(now())+ (1*60*60))  | timestamp_custom("%H:%M",true))}} '
+      - condition: template #check uur voor wekker Manon
+        value_template: '{{ (strptime(states.sensor.tijd_wekker_manon.state, "%H%M")) == ((as_timestamp(now())+ (1*60*60))  | timestamp_custom("%H:%M",true))}} '
+  action:    
+    - service: notify.jan
+      data:
+        title:  "CV aanzetten op 18 graden"
+        message:  "CV aangezet op 18 graden een uur voor 1 van de wekkers"
+    - service: automation.trigger
+      entity_id: automation.cv_temps_instellen_bij_niet_alles_uit
+
+- alias: 'CV temps instellen bij niet alles uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'off'
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.dark_sky_daytime_high_apparent_temperature_0
+      below: 18.0
+    - condition: template
+      value_template: '{{ states.climate.beneden.attributes.away_mode == "on" }}'
+  action:    
+    - service: climate.set_away_mode
+      entity_id: climate.babykamer
+      data:
+        away_mode: false
+    - service: climate.set_away_mode
+      entity_id: climate.beneden
+      data:
+        away_mode: false
+    - delay:
+        minutes: 1
+    - service: climate.set_temperature
+      entity_id: climate.beneden
+      data:
+        temperature: 18.0  
+    - service: notify.jan
+      data:
+        title:  "CV temperaturen weer aangezet op 18 graden"
+        message:  "CV aangezet op 18 graden"
+
+- alias: 'CV temps instellen bij alles uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'on'
+  condition:
+    - condition: template
+      value_template: '{{ states.climate.beneden.attributes.away_mode == "off"  }}'
+  action:    
+    - service: climate.set_away_mode
+      entity_id: climate.babykamer
+      data:
+        away_mode: true
+    - service: climate.set_away_mode # in case set_temperature is removed. 
+      entity_id: climate.beneden
+      data:
+        away_mode: true
+    - service: notify.jan
+      data:
+        title:  "CV uitgezet"
+        message:  "CV op 15 graden gezet"
+
+# - alias: 'Alleen boven aan/uit'
+#   initial_state: true
+#   hide_entity: False
+#   trigger:
+#     - platform: state
+#       entity_id: binary_sensor.alleen_boven_verwarmen_gewenst
+#   action:
+#     - service_template: >
+#         {% if trigger.to_state.state == "on" %}
+#         switch.turn_on
+#         {% else %}
+#         switch.turn_off
+#         {% endif %}
+#       entity_id: switch.alleen_boven_verwarmen
+#     - service: notify.jan
+#       data:
+#         title:  "Alleen boven verwarmen gewijzigd"
+#         message: "Alleen boven naar: {{ states.switch.alleen_boven_verwarmen.state }}"
+
+######NIEUWE VERWARMEN
+##3 virtuele thermostaten. 1 cv ketel. 1 boilerverwarming
+##thermostaat voor boven en beneden. boiler alleen boven
+##alleen boven verwarmen switch om te kijken welk type bovenverarming
+
+- alias: 'Boven verwarmen aan controle'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: switch.badkamer_verwarmen, switch.babykamer_verwarmen
+      to: 'on'
+    - platform: state
+      entity_id: switch.beneden_verwarmen
+      to: 'off'
+    - platform: time_pattern
+      minutes: '/15' 
+  condition:
+    - condition: state
+      entity_id: switch.beneden_verwarmen
+      state: 'off'
+    - condition: state
+      entity_id: switch.alleen_boven_verwarmen
+      state: 'off'    
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: switch.badkamer_verwarmen
+        state: 'on'
+      - condition: state
+        entity_id: switch.babykamer_verwarmen
+        state: 'on'
+  action:    
+    - service: switch.turn_on
+      entity_id: switch.alleen_boven_verwarmen
+    - service: notify.jan
+      data:
+        title:  "Alleen boven verwarmen aangezet"
+        message:  "Alleen boven verwarmen staat nu aan"
+
+- alias: 'Boven verwarmen uit controle'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: switch.beneden_verwarmen
+      to: 'on'
+    - platform: time_pattern
+      minutes: '/15'
+  condition:
+    - condition: state
+      entity_id: switch.alleen_boven_verwarmen
+      state: 'on'
+    - condition: state
+      entity_id: switch.beneden_verwarmen
+      state: 'on'
+  action:    
+    - service: switch.turn_off
+      entity_id: switch.alleen_boven_verwarmen
+    - service: notify.jan
+      data:
+        title:  "Alleen boven verwarmen uit"
+        message:  "Alleen boven verwarmen staat nu uit"
+
+#cv verwarmen als temp boven groter is als 1 graad verschil of alleen beneden verwarmen
+- alias: 'CV thermostaat boven booster'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      minutes: '/7' 
+    - platform: state
+      entity_id: switch.alleen_boven_verwarmen
+      to: 'on'
+    # - platform: state
+    #   entity_id: climate.beneden
+    # - platform: template
+    #   value_template: "{{ states.sensor.berekende_cv_temperatuur.state | float - states.climate.beneden.attributes.current_temperature | float > 1 }}"
+  condition:      
+    - condition: and
+      conditions:
+      - condition: template
+        value_template: "{{ states.sensor.berekende_cv_temperatuur.state | float - states.climate.beneden.attributes.current_temperature | float > 0.5 }}"
+      - condition: state
+        entity_id: switch.alleen_boven_verwarmen
+        state: 'on'  
+      - condition: state
+        entity_id: switch.babykamer_verwarmen
+        state: 'on'
+      # - condition: or
+      #   conditions:
+      #   - condition: and
+      #     conditions:
+      #     - condition: template
+      #       value_template: "{{ (as_timestamp(now())- as_timestamp(states.input_boolean.boven_booster.last_updated)) < 1200 }}" #max 20 minutes booster on
+      #     - condition: state
+      #       entity_id: input_boolean.boven_booster
+      #       state: 'on'
+      #   - condition: and
+      #     conditions:
+      #     - condition: template
+      #       value_template: "{{ (as_timestamp(now())- as_timestamp(states.input_boolean.boven_booster.last_updated)) > 900 }}" #min 15 minutes off
+      #     - condition: state
+      #       entity_id: input_boolean.boven_booster
+      #       state: 'off'        
+  action:
+    - service: input_boolean.turn_on
+      entity_id:  input_boolean.boven_booster
+    - service: variable.set_variable
+      data:
+        variable: climate_thermostaat_setpoint
+        value_template: '{{  states.sensor.berekende_cv_temperatuur.state | float }}'
+    - service: climate.set_temperature
+      entity_id: climate.thermostaat
+      data_template:
+        temperature: "{{ states.sensor.berekende_cv_temperatuur.state | float}}"
+    
+    # - service: notify.jan
+    #   data_template:
+    #     title:  "Thermostaat cv instellen"
+    #     message:  "Ingesteld op: {{ states.sensor.berekende_cv_temperatuur.state | float}}"
+
+- alias: 'CV thermostaat temp reset'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: switch.alleen_boven_verwarmen
+      to: 'off'
+    - platform: state
+      entity_id: climate.beneden, switch.babykamer_verwarmen
+    - platform: template
+      value_template: "{{ states.sensor.berekende_cv_temperatuur.state | float - states.climate.beneden.attributes.current_temperature | float < 0.5 }}"
+  condition:      
+    - condition: and
+      conditions:
+      - condition: or
+        conditions:
+        - condition: template
+          value_template: "{{ states.sensor.berekende_cv_temperatuur.state | float - states.climate.beneden.attributes.current_temperature | float  < 0.5 }}"
+        - condition: state
+          entity_id: switch.alleen_boven_verwarmen
+          state: 'off'  
+        - condition: state
+          entity_id: switch.babykamer_verwarmen
+          state: 'off'      
+  action:
+    - service: input_boolean.turn_off
+      entity_id:  input_boolean.boven_booster
+    - service: variable.set_variable
+      data:
+        variable: climate_thermostaat_setpoint
+        value_template: '{{ states.climate.beneden.attributes.temperature | float }}'
+    - service: climate.set_temperature
+      entity_id: climate.thermostaat
+      data_template:
+        temperature: "{{ states.climate.beneden.attributes.temperature | float }}"
+    # - service: notify.jan
+    #   data_template:
+    #     title:  "Thermostaat cv instellen"
+    #     message:  "Ingesteld op: {{ states.climate.beneden.attributes.temperature | float }}"
+
+    
+- alias: 'CV Thermostaat instelling check'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: climate.thermostaat
+    - platform: template
+      value_template: "{{ (states.variable.climate_thermostaat_setpoint.state | float != states.climate.thermostaat.attributes.temperature | float ) and (as_timestamp(now())-as_timestamp(states.variable.climate_thermostaat_setpoint.last_updated)) > 190 }}"
+  condition:        
+    - condition: state
+      entity_id: input_boolean.boven_booster
+      state: 'off'
+    - condition: template
+      value_template: "{{ (states.variable.climate_thermostaat_setpoint.state | float != states.climate.thermostaat.attributes.temperature | float ) and (as_timestamp(now())-as_timestamp(states.variable.climate_thermostaat_setpoint.last_updated)) > 190 }}"
+  action:
+    - service: variable.set_variable
+      data:
+        variable: climate_thermostaat_setpoint
+        value_template: '{{ states.climate.thermostaat.attributes.temperature | float }}'
+    - service: climate.set_temperature
+      entity_id: climate.beneden
+      data_template:
+        temperature: "{{ states.climate.thermostaat.attributes.temperature | float }}"
+    - service: notify.jan
+      data:
+        title:  "CV thermostaat was handmatig verzet"
+        message:  "Ingestelde temp voor beneden gezet op: {{ states.climate.thermostaat.attributes.temperature | float }}"
+    
+    
+#als de cv aan gaat, wordt er niet verwarmd. zie boven
+- alias: 'Boiler verwarming aan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: switch.alleen_boven_verwarmen, switch.babykamer_verwarmen, switch.badkamer_verwarmen
+    - platform: time_pattern
+      minutes: '/15' 
+  condition:
+    - condition: state
+      entity_id: input_boolean.boiler_verwarming
+      state: 'off'
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: switch.alleen_boven_verwarmen
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: switch.babykamer_verwarmen
+          state: 'on'
+        - condition: state
+          entity_id: switch.badkamer_verwarmen
+          state: 'on'
+  action:    
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.boiler_verwarming
+    - service: notify.jan
+      data:
+        title:  "Boiler verwarming aan"
+        message:  "Boiler verwarming staat nu aan"
+
+- alias: 'Boiler verwarming uit'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: switch.alleen_boven_verwarmen, switch.babykamer_verwarmen, switch.badkamer_verwarmen
+      to: 'off'
+    - platform: time_pattern
+      minutes: '/15' 
+  condition:
+    - condition: state
+      entity_id: input_boolean.boiler_verwarming
+      state: 'on'
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: switch.alleen_boven_verwarmen
+        state: 'off'
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.babykamer_verwarmen
+          state: 'off'
+        - condition: state
+          entity_id: switch.badkamer_verwarmen
+          state: 'off'
+  action:    
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.boiler_verwarming
+    - service: notify.jan
+      data:
+        title:  "Boiler verwarming uit"
+        message:  "Boiler verwarming staat nu uit"

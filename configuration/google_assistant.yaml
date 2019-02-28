@@ -1,0 +1,153 @@
+project_id: homeassistant111018
+#client_id: MXJODdAuc1K4qHU0egSs86lut8Uxo9NENx8ekJzzvaaVn2lF6LmzVldwgnTeqwnDzarnHT9VUF8cPb84
+#access_token: Ev1WvprJfE9cL0VId8IKVJytqdbDjR9dRYtLJQEGUbgf8WYzkPJTfXELnSkRW1FvA6SMeEGvtz96QqlO
+#agent_user_id: HassTenHove
+api_key: !secret google_assistant_api
+expose_by_default: false
+entity_config:
+  light.lamp_stoel:
+    name: Lamp stoel
+    aliases:
+      - roze stoel 
+      - Leeshoek 1
+      - Lamp houtkachel
+    expose: true 
+  light.eettafel:
+    name: Lamp eettafel
+    aliases:
+      - Eettafel
+      - Eethoek
+    expose: true 
+  light.lamp_achterdeur:
+    name: Lamp achterdeur
+    aliases:
+      - Achterdeur
+    expose: true 
+  light.lamp_keuken:
+    name: Lamp keuken
+    aliases:
+      - Keuken
+    expose: true 
+  light.lamp_voordeur:
+    name: Lamp voordeur
+    aliases:
+      - Voordeur
+    expose: true 
+  light.lampjes_kast:
+    name: Lamp kast
+    aliases:
+      - Roze kast
+    expose: true 
+  light.veranda:
+    name: Lamp veranda
+    aliases:
+      - Spots veranda
+      - Veranda
+    expose: true 
+  light.ledstrip_veranda:
+    name: Ledstrip veranda
+    aliases:
+      - Ledstrip 1
+      - Leds acther
+    expose: true 
+  light.ledstrip_voor:
+    name: Ledstrip voor
+    aliases:
+      - Ledstrip 2
+      - Leds voor
+    expose: true 
+  light.spotjes_tuin:
+    name: Spotjes tuin
+    aliases:
+      - Tuin
+      - Lampen tuin
+    expose: true 
+  light.zithoek:
+    name: Lamp zithoek
+    aliases:
+      - Zithoek
+      - Lamp bank
+    expose: true
+  scene.lampen_aan:
+    name: Lampen aan
+    aliases:
+      - Scene lampen aan
+      - Verlichting
+      - Lampen
+    expose: true 
+  input_boolean.tv_kijken:
+    name: Televisie
+    aliases:
+      - Televisie kijken
+      - TV
+    expose: true 
+  input_boolean.chromecast:
+    name: Chromecast
+    aliases:
+      - Chromecast kijken
+      - Streamen
+    expose: true 
+  input_boolean.netflix:
+    name: Netflix
+    aliases:
+      - Netflix kijken
+      - Netflixxen
+      - Xbox
+    expose: true 
+  input_boolean.spotify:
+    name: Spotify
+    aliases:
+      - Spotify luisteren
+      - Muziek
+    expose: true 
+  input_boolean.radio:
+    name: Radio
+    aliases:
+      - Radio luisteren
+      - Radio
+    expose: true 
+  input_boolean.kodi:
+    name: Kodi
+    aliases:
+      - Kodi kijken
+      - Kodi gebruiken
+      - XBMC
+    expose: true 
+  input_boolean.media_uit:
+    name: Media
+    aliases:
+      - Harmony
+    expose: true 
+  climate.thermostaat:
+    name: Temperatuur woonkamer
+    aliases:
+      - Woonkamer temperatuur
+    expose: true
+  input_boolean.google_assistant_zonnepanelen:
+    name: Opbrengst zonnepanelen
+    aliases:
+      - Zonnepanelen
+      - Zonnestroom
+      - Opbrengst vandaag
+      - Vebruik
+      - Opbrengst
+    expose: true
+  input_boolean.google_assistant_temperatuur:
+    name: Temperatuur in huis
+    aliases:
+      - Temperatuur in huis
+      - Temperaturen
+      - Woonkamer temperatuur
+      - Badkamer temperatuur
+      - Babykamer temperatuur
+    expose: true
+  input_boolean.google_assistant_welterusten:
+    name: Welterusten
+    aliases:
+      - Goodnight
+      - Slapen
+      - Goede nacht
+      - Bonne nuit
+    expose: true
+
+    

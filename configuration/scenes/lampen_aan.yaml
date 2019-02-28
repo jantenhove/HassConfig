@@ -1,0 +1,20 @@
+- name: Lampen aan
+  entities:
+    light.lamp_keuken:
+      state: on
+    light.lampjes_kast:
+      state: on
+      brightness: 150
+    light.eettafel:
+      state: on
+      brightness: 118
+    light.zithoek:
+      state: on
+      brightness: 45
+    light.lamp_hoek:
+      state: on
+      brightness: 180
+    light.lamp_stoel:
+      state: on
+    switch.kerstverlichting:
+      state: on

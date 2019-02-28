@@ -1,0 +1,95 @@
+#Handdoekradiator aan als de wekker gaat of er iemand niet meer slaapt
+#TODO: Buiten+binnentemperatuur gebruiken?
+- alias: 'Handdoekradiator aan bij opstaan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.handdoek_radiator_auto
+      to: 'on'
+    - platform: state
+      entity_id: input_boolean.iedereen_slaapt
+      to: 'off'
+    - platform: time_pattern
+      seconds: '/60' 
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: group.aanwezigheid
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.handdoek_radiator_auto
+      state: 'on'
+    - condition: state
+      entity_id: switch.handoekradiator
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.temperature_badkamer
+      below: 20
+    - condition: numeric_state
+      entity_id: sensor.dark_sky_temperature
+      below: 15
+    - condition: time
+      after: '04:00:00'
+      before: '10:00:00'
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+    - condition: or
+      conditions:
+      - condition: template
+        value_template: '{{ trigger.entity_id == "input_boolean.iemand_slaapt"}}'
+      - condition: template #check 10 minuten voor wekker jan
+        value_template: '{{ (strptime(states.sensor.tijd_wekker_jan.state, "%H%M")) == ((as_timestamp(now())+ (10*60))  | timestamp_custom("%H:%M",true))}} '
+      - condition: template #check 10 minuten voor wekker Manon
+        value_template: '{{ (strptime(states.sensor.tijd_wekker_manon.state, "%H%M")) == ((as_timestamp(now())+ (10*60))  | timestamp_custom("%H:%M",true))}} '
+  action:
+    - service: switch.turn_on
+      entity_id: switch.handoekradiator
+    - service: notify.jan
+      data:
+        title:  "Handdoekradiator aangezet"
+        message: "Goedemorgen. De handdoekradiator staat aan (max 30 minuten)"
+
+
+- alias: 'Handdoekradiator aan bij douche aan'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_boolean.douche_aan, input_boolean.handdoek_radiator_auto
+      to: 'on'
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: group.aanwezigheid
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.handdoek_radiator_auto
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.douche_aan
+      state: 'on'
+    - condition: state
+      entity_id: switch.handoekradiator
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.temperature_badkamer
+      below: 20.1
+    - condition: numeric_state
+      entity_id: sensor.dark_sky_temperature
+      below: 15
+    - condition: template
+      value_template: '{{ (as_timestamp(now())-as_timestamp(states.switch.handoekradiator.last_updated)) > 1800 }}' #30 minutes
+  action:
+    - service: switch.turn_on
+      entity_id: switch.handoekradiator
+    - service: notify.jan
+      data:
+        title:  "Handdoekradiator aangezet want douche is aan"
+        message: "Goedemorgen. De handdoekradiator staat aan (max 30 minuten)"

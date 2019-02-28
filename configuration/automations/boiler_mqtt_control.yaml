@@ -1,0 +1,81 @@
+- alias: 'Boiler control mqtt publish'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: time_pattern
+      seconds: '/30' 
+    - platform: state
+      entity_id: switch.handoekradiator
+    - platform: mqtt
+      topic: 'boilerControl/online'
+      # Optional
+      payload: '1'
+  action:
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerTemp"
+        payload_template: '{{states.sensor.boiler_temperatuur.state | float}}'
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerWaterInTemp"
+        payload_template: '{{states.sensor.boiler_in_water_temperatuur.state | float}}'
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerWaterOutTemp"
+        payload_template: '{{states.sensor.boiler_uit_water_temperatuur.state | float}}'
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerPowerToday"
+        payload_template: '{{states.sensor.boiler_verbruik_vandaag.state | float}}'
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerPowerCurrent"
+        payload_template: '{{states.sensor.boiler_huidig_verbruik.state | float}}'
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerHeatingInTemp"
+        payload_template: '{{states.sensor.boiler_verwarming_in_temperatuur.state | float}}'
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerHeatingOutTemp"
+        payload_template: '{{states.sensor.boiler_verwarming_uit_temperatuur.state | float}}'
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/boilerHeatingValve"
+        payload_template: "{% if states.switch.klep_verwarming_boiler.state == 'on' %}1{% else %}0{% endif %}"
+    - service: mqtt.publish
+      data_template:
+        topic: "boilerControl/state/handoekRadiator"
+        payload_template: "{% if states. switch.handoekradiator.state == 'on' %}1{% else %}0{% endif %}"
+
+- alias: 'Boiler control handoekradiator'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: mqtt
+      topic: 'boilerControl/control/toggleTowelHeater'
+  action:
+    - service: switch.toggle
+      entity_id: 'switch.handoekradiator'
+
+- alias: 'Boiler control verwarm warm water'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: mqtt
+      topic: 'boilerControl/control/heatWarmWater'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: 'input_boolean.force_water_heating'
+
+- alias: 'Boiler control toggle warm'
+  initial_state: true
+  hide_entity: False
+  trigger:
+    - platform: mqtt
+      topic: 'boilerControl/control/toggleDomesticHeating'
+  action:
+    - service: input_boolean.toggle
+      entity_id: 'input_boolean.boiler_verwarming'
+
+      

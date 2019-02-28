@@ -1,0 +1,325 @@
+- alias: Alarm Trigger Home
+  hide_entity: True
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id:  binary_sensor.boven_open
+      to: 'on'
+    - platform: state #only voor en achterduer. geen schuurdeur ivm thuiskomen
+      entity_id: binary_sensor.voordeur_contact, binary_sensor.achterdeur_contact
+      to: 'on'
+  condition:
+    condition: state
+    entity_id: alarm_control_panel.franjezwam_28
+    state: armed_home
+  action:
+    service: alarm_control_panel.alarm_trigger
+    entity_id: alarm_control_panel.franjezwam_28
+
+- alias: Alarm Trigger Away
+  hide_entity: True
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.beweging_beneden
+      to: 'on'
+    - platform: state
+      entity_id:  binary_sensor.boven_open
+      to: 'on'
+    - platform: state #only voor en achterduer. geen schuurdeur ivm thuiskomen
+      entity_id: binary_sensor.voordeur_contact, binary_sensor.achterdeur_contact
+      to: 'on'
+  condition:
+    condition: state
+    entity_id: alarm_control_panel.franjezwam_28
+    state: armed_away
+  action:
+    service: alarm_control_panel.alarm_trigger
+    entity_id: alarm_control_panel.franjezwam_28
+
+- alias: 'Alarm Home bij alles uit'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'on'
+  condition:
+    condition: state
+    entity_id:  group.aanwezigheid
+    state: 'on'
+  action:
+    - service: alarm_control_panel.alarm_arm_home
+      data:
+        entity_id: alarm_control_panel.franjezwam_28
+        code: !secret alarm_secret
+
+- alias: 'Alarm Away bij alles uit + niemand thuis'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.alles_uit
+      to: 'on'
+    - platform: state
+      entity_id: group.aanwezigheid
+      to: 'off'
+  condition:
+    condition: state
+    entity_id:  group.aanwezigheid
+    state: 'off'
+  action:
+    - service: alarm_control_panel.alarm_arm_away
+      data:
+        entity_id: alarm_control_panel.franjezwam_28
+        code: !secret alarm_secret
+      
+
+- alias: 'Alarm Home disarm bij niet slapen'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: input_boolean.iedereen_slaapt, input_boolean.iemand_slaapt
+      to: 'off'
+  condition:
+    - condition: state
+      entity_id: alarm_control_panel.franjezwam_28
+      state: armed_home
+    - condition: time
+      after: '05:00:00'
+      before: '10:00:00'
+  action:
+    - service: alarm_control_panel.alarm_disarm
+      data:
+        entity_id: alarm_control_panel.franjezwam_28
+        code: !secret alarm_secret
+
+- alias: 'Alarm Disarm met knop/telefoon'
+  initial_state: true
+  trigger:
+    - platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.aqara_switch_1
+    - platform: event
+      event_type: click
+      event_data:
+        entity_id: binary_sensor.aqara_switch_2
+    - platform: mqtt
+      topic: tasker/Jan/alarm
+      # Optional
+      payload: '0'
+  action:
+    - service: alarm_control_panel.alarm_disarm
+      data:
+        entity_id: alarm_control_panel.franjezwam_28
+        code: !secret alarm_secret
+
+- alias: 'Alarm triggered'
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: alarm_control_panel.franjezwam_28
+    to: 'triggered'
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.alarm
+    - service: notify.jan
+      data:
+        title:  "Alarm gaat af"
+        message: "Alarm gaat nu af. Disarm om uit te zetten"
+    - service: rest_command.autoremote_alarm_triggered_jan
+    - service: mqtt.publish
+      data:
+        topic: "home_assistant/state/alarm"
+        payload_template: "triggered"
+
+- alias: 'Alarm sirene'
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.alarm
+    to: 'on'
+  action:
+    - event: script_repeat
+      event_data_template:
+        entity_id: script.lampen_knipper
+        repeat_start: "1"
+        repeatMilliseconds: 2000
+    - event: script_repeat
+      event_data_template:
+        entity_id: script.alarm_loop
+        repeat_start: "1"
+        repeatMilliseconds: 8000
+    #geluid afspelen
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_voor
+        temporary_start: 1
+        brightness: 250
+        rgb_color: ['255','0','0']
+        effect: Blink
+    - service: input_number.set_value
+      data:
+        entity_id: input_number.ledStrip1_animatie_snelheid
+        value: 200
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_veranda
+        temporary_start: 1
+        brightness: 250
+        rgb_color: ['255','0','0']
+        effect: Blink
+    - service: input_number.set_value
+      data:
+        entity_id: input_number.ledStrip2_animatie_snelheid
+        value: 200
+
+- alias: 'Alarm sirene uit'
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: input_boolean.alarm
+    to: 'off'
+  action:
+    - event: script_repeat
+      event_data_template:
+        entity_id: script.lampen_knipper
+        repeat_start: "0"
+    - event: script_repeat
+      event_data_template:
+        entity_id: script.alarm_loop
+        repeat_start: "0"
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_veranda
+        temporary_start: 0
+    - event: temporary_change
+      event_data:
+        entity_id: light.ledstrip_voor
+        temporary_start: 0    
+    - service: automation.trigger
+      entity_id: automation.alles_aan_lichten_aan
+    - service: xiaomi_aqara.stop_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac
+  
+        
+
+    # - service: input_boolean.turn_on
+    #   entity_id: input_boolean.alarm
+    # #- service: script.turn_on
+    # #  entity_id: script.alarm_loop
+    # - service: notify.jan
+    #   data:
+    #     title:  "Alarm gaat af"
+    #     message: "Alarm gaat nu af. Disarm om uit te zetten"
+    # - delay: '00:05:00' #max on time
+    # - service: input_boolean.turn_off
+    #   entity_id: input_boolean.alarm
+
+- alias: 'Alarm armed acties'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: alarm_control_panel.franjezwam_28
+      to: 'armed_home'
+    - platform: state
+      entity_id: alarm_control_panel.franjezwam_28
+      to: 'armed_away'
+  action:
+    - service: rest_command.camera_voordeur_motion_enable
+    - service: rest_command.camera_achterdeur_motion_enable
+    - service: light.turn_on
+      data:
+        entity_id: light.xiami_hub
+        brightness: 50
+        color_name: red
+
+- alias: 'Alarm disarm melding en acties'
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: alarm_control_panel.franjezwam_28
+    to: 'disarmed'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.alarm
+    - service: xiaomi_aqara.stop_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac
+    - service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac
+        ringtone_id: 10002
+        ringtone_vol: "30"
+    - service: notify.jan
+      data:
+        title:  "Alarm uitgezet"
+        message: "Alarm is uitgezet"
+    - service: light.turn_on
+      data:
+        entity_id: light.xiami_hub
+        brightness: 5
+        color_name: green
+    - service: rest_command.autoremote_alarm_disarmed_jan
+    - service: rest_command.camera_voordeur_motion_disable
+    - service: rest_command.camera_achterdeur_motion_disable
+
+- alias: 'Alarm aanzetten wachttijd'
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: alarm_control_panel.franjezwam_28
+    from: 'disarmed'
+    to: 'pending'
+  action:
+    - service: notify.jan
+      data:
+        title:  "Alarm aanzetten"
+        message: "Alarm wordt aangezet. Tijd om huis te verlaten/naar boven te gaan"
+    - service: xiaomi_aqara.play_ringtone
+      data_template:
+        gw_mac: !secret xiaomi_mac
+        ringtone_id: 10003
+        ringtone_vol: >-
+          {%- if now().hour < 6 %}
+              1
+          {% elif now().hour >= 22 %}
+              1
+          {%- elif now().hour >= 20 %}
+              3
+          {%  else %}
+              30
+           {%  endif %}
+    - service: mqtt.publish
+      data:
+        topic: "home_assistant/state/alarm"
+        payload_template: "pending"
+
+- alias: 'Alarm uitzetten wachttijd'
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: alarm_control_panel.franjezwam_28
+      from: 'armed_home'
+      to: 'pending'
+    - platform: state
+      entity_id: alarm_control_panel.franjezwam_28
+      from: 'armed_away'
+      to: 'pending'
+  action:
+    - service: xiaomi_aqara.stop_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac
+    - service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: !secret xiaomi_mac
+        ringtone_id: 10001
+        ringtone_vol: "30"
+    - service: notify.jan
+      data:
+        title:  "Alarm uitzetten"
+        message: "Alarm gaat bijna. Tijd om uit te zetten"
+    - service: mqtt.publish
+      data:
+        topic: "home_assistant/state/alarm"
+        payload_template: "pending"

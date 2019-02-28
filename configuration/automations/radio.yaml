@@ -1,0 +1,89 @@
+- alias: "Auto start radio Kodi"
+  initial_state: true
+  trigger:
+    platform: state
+    entity_id: remote.woonkamer
+  condition:
+    condition: template
+    value_template: '{{  states.remote.woonkamer.attributes.current_activity == "Radio" }}'
+  action:
+  #- delay:
+  #    seconds: 10
+  - service: automation.trigger
+    entity_id: automation.radio_input_select_handler
+  # - service: input_select.select_option
+    # data:
+      # entity_id: input_select.radio_zenders
+      # option: SkyRadio
+      ##when the input group is enabled radio will be started no matter if the option was on skyradio or not
+      ##Todo: keep on last radio station?
+         
+- alias: "Radio enable"
+  initial_state: true
+  trigger:
+    - platform: state
+      entity_id: remote.woonkamer
+    - platform: homeassistant
+      event: start
+  action:
+  - service: group.set_visibility
+    entity_id: group.radio
+    data_template:
+      visible: '{{ states.remote.woonkamer.attributes.current_activity == "Radio" }}'
+     
+
+- alias: "Radio input select handler"
+  initial_state: true
+  hide_entity: True
+  trigger:
+    - platform: state
+      entity_id: input_select.radio_zenders
+  action:
+    # - service: media_player.kodi_call_method
+    #   data_template:
+    #     entity_id: media_player.kodi
+    #     method: Player.Open
+    #     item:
+    #       file: '{% if is_state("input_select.radio_zenders", "SkyRadio") %}D:/Radio/Skyradio.strm{% elif is_state("input_select.radio_zenders", "Radio 2") %}D:/Radio/Radio2.strm{% elif is_state("input_select.radio_zenders", "SkyRadio kerst") %}D:/Radio/skykerst.strm{% elif is_state("input_select.radio_zenders", "Q-Music") %}D:/Radio/QMusic.strm{% elif is_state("input_select.radio_zenders", "Radio 538") %}D:/Radio/Radio538.strm{% elif is_state("input_select.radio_zenders", "Radio 3") %}D:/Radio/Radio3.strm{% elif is_state("input_select.radio_zenders", "Slam FM") %}D:/Radio/SlamFM.strm{% elif is_state("input_select.radio_zenders", "Radio 1") %}D:/Radio/Radio1.strm{% elif is_state("input_select.radio_zenders", "BNR") %}D:/Radio/bnr.strm{% else %}D:/Radio/Skyradio.strm{% endif %}'
+    - service: media_player.play_media
+      data_template:
+        entity_id: media_player.woonkamer
+        media_content_id: >
+          {% if is_state("input_select.radio_zenders", "SkyRadio") %} http://20133.live.streamtheworld.com/SKYRADIO.mp3
+          {% elif is_state("input_select.radio_zenders", "SkyRadio kerst") %} http://20103.live.streamtheworld.com/SRGSTR08AAC.aac
+          {% elif is_state("input_select.radio_zenders", "Radio 2") %} http://icecast.omroep.nl/radio2-bb-mp3
+          {% elif is_state("input_select.radio_zenders", "Q-Music") %} http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_nonstop_64.aac
+          {% elif is_state("input_select.radio_zenders", "Q-Music non stop") %} http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_nonstop_64.aac
+          {% elif is_state("input_select.radio_zenders", "Radio 538") %} http://18973.live.streamtheworld.com/RADIO538.mp3
+          {% elif is_state("input_select.radio_zenders", "Radio 3") %} http://icecast.omroep.nl/3fm-bb-mp3
+          {% elif is_state("input_select.radio_zenders", "Slam Fm") %} http://stream.slam.nl/slamaac
+          {% elif is_state("input_select.radio_zenders", "Radio 1") %} http://icecast.omroep.nl/radio1-bb-aac
+          {% elif is_state("input_select.radio_zenders", "BNR") %} http://icecast-bnr.cdp.triple-it.nl/bnr_mp3_96_06.m3u
+          {% endif %}
+        media_content_type: 'audio/mp4' 
+     # data_template:
+        # entity_id: media_player.kodi
+        # method: Player.Open
+        # item:
+          # file: >
+            # {% if is_state("input_select.radio_zenders", "SkyRadio") %}
+               # D:/Radio/Skyradio.strm
+            # {% elif is_state("input_select.radio_zenders", "Radio 2") %}
+               # D:/Radio/Radio2.strm
+            # {% elif is_state("input_select.radio_zenders", "Q-Music") %}á
+               # D:/Radio/QMusic.strm
+            # {% elif is_state("input_select.radio_zenders", "Radio 538") %}
+               # D:/Radio/Radio538.strm
+            # {% elif is_state("input_select.radio_zenders", "Radio 3") %}
+               # D:/Radio/Radio3.strm
+            # {% elif is_state("input_select.radio_zenders", "Slam Fm) %}
+               # D:/Radio/SlamFM.strm
+            # {% elif is_state("input_select.radio_zenders", "Radio 1") %}
+               # D:/Radio/Radio1.strm
+            # {% elif is_state("input_select.radio_zenders", "BNR") %}
+               # D:/Radio/bnr.strm
+            # {% elif is_state("input_select.radio_zenders", "BNR") %}
+               # D:/Radio/bnr.strm   
+            # {% else %}
+               # D:/Radio/Skyradio.strm
+            # {% endif %}

@@ -1,0 +1,3 @@
+climate_thermostaat_setpoint:
+  value: 0
+  restore: true

@@ -1,0 +1,232 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Thuis
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret gps_lat
+  longitude: !secret gps_lon
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 5
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Amsterdam
+  whitelist_external_dirs:
+  - /tmp
+  customize: !include customize.yaml
+
+lovelace:
+  mode: yaml
+  
+logger:
+  default: info
+  logs:
+    homeassistant.components.device_tracker: critical
+    homeassistant.components.camera: critical
+    
+recorder:
+  db_url: mysql://hass_user:hass_pass@192.168.2.100/hass_db?charset=utf8
+  purge_keep_days: 7
+  exclude:
+    domains:
+      - weblink
+      - updater
+      - scene
+      - group
+      - sun
+      - mqtt
+      - script
+      - media_player      
+
+# Enables the frontend
+frontend:
+  themes: !include configuration/themes.yaml
+# Enables configuration UI
+config:
+
+system_health:
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret http_password
+  # Uncomment this if you are using SSL or running in Docker etc
+  base_url: thuis.outside-url.com:8123
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+zwave:
+  usb_path: /dev/ttys0
+  network_key: !secret zwave_secret
+
+alarm_control_panel:
+  - platform: manual
+    name: "Franjezwam 28"
+    code: !secret alarm_secret
+    pending_time: 30
+    delay_time: 33
+    trigger_time: 120
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      pending_time: 30
+      delay_time: 3
+    armed_away:
+      pending_time: 30
+      delay_time: 3
+    disarm_after_trigger: true
+
+xiaomi_aqara:
+  gateways:
+    - host: 192.168.2.87
+      mac: !secret xiaomi_mac
+      key: !secret xiaomi_secret
+
+google:
+  client_id: !secret google_cid
+  client_secret: !secret google_secret
+
+influxdb:
+  host: 192.168.2.100
+  override_measurement: state
+  default_measurement: state
+  include: !include configuration/logtoinflux.yaml
+   
+# Text to speech
+tts:
+  - platform: google
+    language: nl
+    
+
+media_player:
+  - platform: kodi
+    name: Kodi
+    host: 192.168.2.100
+    port: 5555
+    username: !secret kodi_user
+    password: !secret kodi_pass
+ 
+cast:
+  media_player:
+  - host: 192.168.2.18
+    name: Chromecast woonkamer
+  - host: 192.168.2.37
+    name: Google Home mini
+  
+remote:
+  - platform: harmony
+    name: Woonkamer
+    host: 192.168.2.136 
+
+device_tracker:
+  - platform: tomato
+    host: 192.168.2.1
+    username: admin
+    password:  !secret router_password
+    http_id: !secret router_http_id
+
+mqtt:
+  broker: 192.168.2.100
+  port: 1883
+  client_id: home-assistant-1
+  keepalive: 60
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+
+# zoneminder:
+#   host: 192.168.2.100:8080
+#   path_zms: /zm/cgi-bin/nph-zms
+#   ssl: False
+#   username: !secret zoneminder_user
+#   password: !secret zoneminder_password
+
+notify:
+  - name: jan
+    platform: telegram
+    chat_id: 573726555
+    
+rfxtrx:
+  device: /dev/ttys1
+  debug: False
+  
+google_assistant: !include configuration/google_assistant.yaml
+  
+# opentherm_gw:
+  # device: socket://192.168.2.112:23
+  # climate:
+    # name: OTGW_thermostat
+    # precision: 0.5
+    # floor_temperature: True
+  # monitored_variables:
+    # - room_setpoint
+    # - room_temp
+    # - return_water_temp
+    # - slave_flame_on
+    # - slave_ch_active
+    # - slave_dhw_active
+    # - relative_mod_level
+    # - slave_fault_indication
+    # - outside_temp
+    
+downloader:
+  download_dir: /tmp
+  
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api_key
+    parse_mode: html
+    allowed_chat_ids:
+      - 573726555
+
+
+weather:
+  - platform: darksky
+    api_key: !secret dark_sky_api_key
+
+rest_command: !include configuration/restcommands.yaml
+
+light: !include configuration/lights.yaml
+
+climate: !include configuration/climate.yaml
+       
+sensor: !include_dir_merge_list configuration/sensors
+      
+camera: !include configuration/cameras.yaml    
+      
+switch: !include configuration/switches.yaml
+    
+fan: !include configuration/fan.yaml
+
+weblink: !include configuration/weblink.yaml
+
+panel_iframe: !include configuration/panel_iframe.yaml
+
+input_boolean: !include configuration/input_booleans.yaml
+input_select: !include configuration/input_selects.yaml
+input_number: !include configuration/input_numbers.yaml
+
+variable: !include configuration/variables.yaml
+
+binary_sensor: !include configuration/binary_sensors.yaml
+
+automation: !include_dir_merge_list configuration/automations
+ 
+group: !include_dir_merge_named configuration/groups
+
+scene: !include_dir_merge_list  configuration/scenes
+
+script: !include_dir_merge_named configuration/scripts

@@ -1,0 +1,57 @@
+default_view:
+  name: Start
+  view: yes
+  entities:
+    - group.scenes_binnen
+    - group.scenes_buiten
+    - group.verlichting_binnen
+    - group.verlichting_buiten
+    - group.beveiliging_klein
+    - group.temperatuur_klein
+
+scenes_binnen:
+  name: Scenes binnen
+  view: no
+  entities:
+    - scene.lampen_aan
+    - scene.lampen_uit
+    - scene.film_en_tv_verlichting
+    - scene.romantisch_diner
+    - input_boolean.alles_uit
+
+verlichting_binnen:
+  name: Verlichting binnen
+  view: no
+  entities:
+    - light.zithoek
+    - light.eettafel
+    - light.zithoek
+    - light.lamp_stoel
+    - light.lampjes_kast
+    - light.lamp_keuken
+    
+verlichting_buiten:
+  name: Verlichting buiten
+  view: no
+  entities:
+    - light.lamp_berging
+    - light.lamp_voordeur
+    - light.lamp_achterdeur
+    - light.spotjes_tuin
+    - light.veranda
+
+beveiliging_klein:
+  name: Beveiliging
+  view: no
+  entities:
+    - input_boolean.beweging_beneden
+    - binary_sensor.deur_benenden_open
+    - binary_sensor.boven_open
+
+temperatuur_klein:
+  name: Temperatuur
+  view: no
+  entities:
+    - sensor.fibaro_woonkamer_temperatuur
+    - sensor.dark_sky_temperature
+    - sensor.boiler_temperatuur

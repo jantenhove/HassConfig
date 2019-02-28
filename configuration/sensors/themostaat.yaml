@@ -1,0 +1,52 @@
+- platform: mqtt
+  state_topic: "events/otgw/otgw/roomtemperature"
+  unit_of_measurement: "°C" 
+  name: "Kamer thermostaat"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/boilerwatertemperature"
+  unit_of_measurement: "°C" 
+  name: "CV ketel boiler temperatuur"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/returnwatertemperature"
+  unit_of_measurement: "°C" 
+  name: "CV retour temperatuur"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/dhwtemperature"
+  unit_of_measurement: "°C" 
+  name: "CV heet water temperatuur"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/controlsetpoint"
+  unit_of_measurement: "°C" 
+  name: "CV Control setpoint"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/modulation"
+  unit_of_measurement: "%" 
+  name: "CV Modulatie"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/powermode"
+  name: "CV Power mode"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/fault"
+  name: "CV Fout status"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/dhwsetpoint"
+  name: "CV Heet water setpoint"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/chsetpoint"
+  name: "CV Verwarming setpoint"
+- platform: mqtt
+  state_topic: "events/otgw/otgw/outsidetemperature"
+  name: "CV buitentemperatuur"     
+
+- platform: template
+  sensors:
+    berekende_cv_temperatuur:
+      friendly_name: "Berekende cv temperatuur"
+      unit_of_measurement: '°C'
+      value_template: >-
+        {% if is_state("switch.beneden_verwarmen", "off") and (is_state("switch.babykamer_verwarmen", "on") or 
+            is_state("switch.badkamer_verwarmen", "on")) -%}
+            {{ [ states.climate.badkamer.attributes.temperature -states.climate.badkamer.attributes.current_temperature,states.climate.babykamer.attributes.temperature -states.climate.babykamer.attributes.current_temperature] | max  + states.climate.beneden.attributes.current_temperature }}
+        {%- else -%}
+            {{ states.climate.beneden.attributes.current_temperature }}
+        {%- endif %}

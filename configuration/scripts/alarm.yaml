@@ -1,0 +1,17 @@
+alarm_loop:
+    alias: "Alarm loop"
+    sequence:
+      - service: xiaomi_aqara.play_ringtone
+        data:
+          gw_mac: !secret xiaomi_mac
+          ringtone_id: 2
+          ringtone_vol: "100"
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.assistent
+          volume_level: 1
+      - service: tts.google_say
+        data:
+          entity_id: media_player.assistent
+          message: 'Alarm!!!. Verlaat het huis! '
+      #- delay: '00:00:8'
