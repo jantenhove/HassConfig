@@ -1,16 +1,16 @@
 grafana:
   title: 'Grafana'
-  url: 'https://grafana.thuis.outside-url.com'
+  url: 'https://grafana.thuis.ten-hove.net'
   icon: mdi:graphql
 zoneminder:
   title: 'Zoneminder'
-  url: 'https://zm.thuis.outside-url.com/zm'
+  url: 'https://zm.thuis.ten-hove.net/zm'
   icon: mdi:cctv
 sonarr:
   title: 'Sonarr'
-  url: https://sonarr.thuis.outside-url.com
+  url: https://sonarr.thuis.ten-hove.net
   icon: mdi:cloud-download
 radarr:
   title: Radarr
-  url: https://radarr.thuis.outside-url.com
+  url: https://radarr.thuis.ten-hove.net
   icon: mdi:cloud-download

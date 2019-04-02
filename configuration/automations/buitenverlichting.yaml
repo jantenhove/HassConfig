@@ -7,7 +7,7 @@
       entity_id: input_boolean.alles_uit
       to: 'off'
     - platform: state
-      entity_id: group.aanwezigheid
+      entity_id: input_boolean.iemand_thuis
       to: 'on'
     - platform: state
       entity_id: input_boolean.donker_buiten
@@ -23,8 +23,7 @@
   action:
     - service: scene.turn_on
       entity_id: scene.tuinverlichting_gedimd
-    - service: input_boolean.turn_on
-      entity_id: input_boolean.ledstrips_aan
+   
 
 #alles uit bij niet meer donker buiten
 - alias: 'Buitenverlichting uit'
@@ -37,8 +36,6 @@
   action:
     - service: scene.turn_on
       entity_id: scene.tuinverlichting_uit
-    - service: input_boolean.turn_off
-      entity_id: input_boolean.ledstrips_aan
 
 - alias: 'Buitenverlichting deur max'
   initial_state: true

@@ -49,7 +49,7 @@
 #       entity_id: input_boolean.iedereen_slaapt
 #       to: 'on'
 #     - platform: state
-#       entity_id:  group.aanwezigheid
+#       entity_id:  input_boolean.iemand_thuis
 #       to: 'off'
 #   condition:
 #     condition: and
@@ -69,7 +69,7 @@
       entity_id: input_boolean.beweging_beneden_afgelopen_half_uur
       to: 'off'
     - platform: state
-      entity_id:  group.aanwezigheid
+      entity_id:  input_boolean.iemand_thuis
       to: 'off'
   condition:
     condition: and
@@ -80,7 +80,7 @@
     - condition: or
       conditions:
       - condition: state
-        entity_id: group.aanwezigheid
+        entity_id: input_boolean.iemand_thuis
         state: 'off'
       - condition: state
         entity_id: input_boolean.iedereen_slaapt
@@ -104,6 +104,16 @@
     - platform: event
       event_type: button_pressed
       event_data: {"entity_id": "switch.afstandsbediening_wit_knop_1", "state" : "group off"}
+    - platform: event
+      event_type: xiaomi_aqara.click
+      event_data:
+        entity_id: binary_sensor.aqara_switch_1
+        click_type: double
+    - platform: event
+      event_type: xiaomi_aqara.click
+      event_data:
+        entity_id: binary_sensor.aqara_switch_2
+        click_type: double
   action:
     service: input_boolean.turn_on
     entity_id: input_boolean.alles_uit

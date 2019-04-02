@@ -20,37 +20,29 @@
     - condition: or
       conditions:
       - condition: state
-        entity_id: input_boolean.jan_thuis
-        state: 'off'
+        entity_id: person.jan
+        state: 'not_home'
       - condition: and
         conditions:
         - condition: state
           entity_id: binary_sensor.telefoon_jan_aan_lader
           state: 'on'
         - condition: state
-          entity_id: input_boolean.jan_thuis
-          state: 'on'
+          entity_id: person.jan
+          state: 'home'
     - condition: or
       conditions:
       - condition: state
-        entity_id: input_boolean.manon_thuis
-        state: 'off'
+        entity_id: person.manon
+        state: 'not_home'
       - condition: and
         conditions:
         - condition: state
           entity_id: binary_sensor.telefoon_manon_aan_lader
           state: 'on'
         - condition: state
-          entity_id: input_boolean.manon_thuis
-          state: 'on'
-    - condition: or #someone home?
-      conditions:
-      - condition: state
-        entity_id: input_boolean.jan_thuis
-        state: 'on'
-      - condition: state
-        entity_id: input_boolean.jan_thuis
-        state: 'on'
+          entity_id: person.manon
+          state: 'home'
   action:
     - service: input_boolean.turn_on
       entity_id: 
@@ -83,16 +75,16 @@
             entity_id: binary_sensor.telefoon_jan_aan_lader
             state: 'on'
           - condition: state
-            entity_id: input_boolean.jan_thuis
-            state: 'on'
+            entity_id: person.jan
+            state: 'home'
         - condition: and
           conditions:
           - condition: state
             entity_id: binary_sensor.telefoon_manon_aan_lader
             state: 'on'
           - condition: state
-            entity_id: input_boolean.manon_thuis
-            state: 'on'
+            entity_id: person.manon
+            state: 'home'
   action:
     - service: input_boolean.turn_on
       entity_id: 
@@ -107,8 +99,8 @@
       to: 'off'
   condition:
   - condition: state
-    entity_id: input_boolean.jan_thuis
-    state: 'on'   
+    entity_id: person.jan
+    state: 'home'   
   action:
   - service: input_boolean.turn_off
     entity_id: 
@@ -123,8 +115,8 @@
       to: 'off'
   condition:
   - condition: state
-    entity_id: input_boolean.manon_thuis
-    state: 'on'   
+    entity_id: person.manon
+    state: 'home'   
   action:
   - service: input_boolean.turn_off
     entity_id: 
@@ -148,29 +140,29 @@
       - condition: or
         conditions:
         - condition: state
-          entity_id: input_boolean.jan_thuis
-          state: 'off'
+          entity_id: person.jan
+          state: 'not_home'
         - condition: and
           conditions:
           - condition: state
             entity_id: binary_sensor.telefoon_jan_aan_lader
             state: 'off'
           - condition: state
-            entity_id: input_boolean.jan_thuis
-            state: 'on'
+            entity_id: person.jan
+            state: 'home'
       - condition: or
         conditions:
         - condition: state
-          entity_id: input_boolean.manon_thuis
-          state: 'off'
+          entity_id: person.manon
+          state: 'not_home'
         - condition: and
           conditions:
           - condition: state
             entity_id: binary_sensor.telefoon_manon_aan_lader
             state: 'off'
           - condition: state
-            entity_id: input_boolean.manon_thuis
-            state: 'on'
+            entity_id: person.manon
+            state: 'home'
   action:
     - service: input_boolean.turn_off
       entity_id: 
@@ -189,7 +181,7 @@
       data:
         title:  "{% if states.input_boolean.iedereen_slaapt.state == 'on' %}Iedereen{% else %}Niet iedereen{% endif %}, die thuis is, slaapt."
         message: >
-          Telefoon Jan thuis: {% if states.input_boolean.jan_thuis.state != 'on'%}nee{% else %}ja{% endif %}, telefoon Manon thuis: {% if states.input_boolean.Manon_thuis.state != 'on'%}nee{% else %}ja{% endif %}.
+          Telefoon Jan thuis: {% if states.person.jan.state != 'home'%}nee{% else %}ja{% endif %}, telefoon Manon thuis: {% if states.person.manon.state != 'home'%}nee{% else %}ja{% endif %}.
           
 - alias: 'Slaap melding iemand slaapt'  
   initial_state: true
@@ -203,4 +195,4 @@
       data:
         title:  "{% if states.input_boolean.iemand_slaapt.state == 'on' %}Iemand{% else %}Niemand{% endif %}, die thuis is, slaapt."
         message: >
-          Telefoon Jan thuis: {% if states.input_boolean.jan_thuis.state != 'on'%}nee{% else %}ja{% endif %}, telefoon Manon thuis: {% if states.input_boolean.Manon_thuis.state != 'on'%}nee{% else %}ja{% endif %}.
+          Telefoon Jan thuis: {% if states.person.jan.state != 'home'%}nee{% else %}ja{% endif %}, telefoon Manon thuis: {% if states.person.manon.state != 'on'%}nee{% else %}ja{% endif %}.

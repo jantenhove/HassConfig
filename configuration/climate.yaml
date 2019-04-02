@@ -17,7 +17,7 @@
   min_temp: 15
   max_temp: 21
   ac_mode: False
-  target_temp: 19.5
+  target_temp: 19
   cold_tolerance: 0.1
   hot_tolerance: 0.1
   min_cycle_duration:
@@ -32,7 +32,7 @@
   min_temp: 15
   max_temp: 21
   ac_mode: False
-  target_temp: 18
+  target_temp: 16.5
   cold_tolerance: 0.2
   hot_tolerance: 0.2
   min_cycle_duration:
@@ -40,7 +40,7 @@
   keep_alive:
     minutes: 3
   initial_operation_mode: "auto"
-  away_temp: 17
+  away_temp: 15
   
 - platform: generic_thermostat
   name: Beneden

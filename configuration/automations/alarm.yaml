@@ -45,7 +45,7 @@
       to: 'on'
   condition:
     condition: state
-    entity_id:  group.aanwezigheid
+    entity_id:  input_boolean.iemand_thuis
     state: 'on'
   action:
     - service: alarm_control_panel.alarm_arm_home
@@ -60,11 +60,11 @@
       entity_id: input_boolean.alles_uit
       to: 'on'
     - platform: state
-      entity_id: group.aanwezigheid
+      entity_id: input_boolean.iemand_thuis
       to: 'off'
   condition:
     condition: state
-    entity_id:  group.aanwezigheid
+    entity_id:  input_boolean.iemand_thuis
     state: 'off'
   action:
     - service: alarm_control_panel.alarm_arm_away
@@ -96,13 +96,15 @@
   initial_state: true
   trigger:
     - platform: event
-      event_type: click
+      event_type: xiaomi_aqara.click
       event_data:
         entity_id: binary_sensor.aqara_switch_1
+        click_type: single
     - platform: event
-      event_type: click
+      event_type: xiaomi_aqara.click
       event_data:
         entity_id: binary_sensor.aqara_switch_2
+        click_type: single
     - platform: mqtt
       topic: tasker/Jan/alarm
       # Optional
@@ -200,7 +202,10 @@
       entity_id: automation.alles_aan_lichten_aan
     - service: xiaomi_aqara.stop_ringtone
       data:
-        gw_mac: !secret xiaomi_mac
+        gw_mac: !secret xiaomi_beneden_mac
+    - service: xiaomi_aqara.stop_ringtone
+      data:
+        gw_mac: !secret xiaomi_boven_mac
   
         
 
@@ -230,7 +235,7 @@
     - service: rest_command.camera_achterdeur_motion_enable
     - service: light.turn_on
       data:
-        entity_id: light.xiami_hub
+        entity_id: light.xiami_hub_beneden
         brightness: 50
         color_name: red
 
@@ -245,10 +250,10 @@
       entity_id: input_boolean.alarm
     - service: xiaomi_aqara.stop_ringtone
       data:
-        gw_mac: !secret xiaomi_mac
+        gw_mac: !secret xiaomi_beneden_mac
     - service: xiaomi_aqara.play_ringtone
       data:
-        gw_mac: !secret xiaomi_mac
+        gw_mac: !secret xiaomi_beneden_mac
         ringtone_id: 10002
         ringtone_vol: "30"
     - service: notify.jan
@@ -257,7 +262,7 @@
         message: "Alarm is uitgezet"
     - service: light.turn_on
       data:
-        entity_id: light.xiami_hub
+        entity_id: light.xiami_hub_beneden
         brightness: 5
         color_name: green
     - service: rest_command.autoremote_alarm_disarmed_jan
@@ -278,7 +283,7 @@
         message: "Alarm wordt aangezet. Tijd om huis te verlaten/naar boven te gaan"
     - service: xiaomi_aqara.play_ringtone
       data_template:
-        gw_mac: !secret xiaomi_mac
+        gw_mac: !secret xiaomi_beneden_mac
         ringtone_id: 10003
         ringtone_vol: >-
           {%- if now().hour < 6 %}
@@ -309,10 +314,10 @@
   action:
     - service: xiaomi_aqara.stop_ringtone
       data:
-        gw_mac: !secret xiaomi_mac
+        gw_mac: !secret xiaomi_beneden_mac
     - service: xiaomi_aqara.play_ringtone
       data:
-        gw_mac: !secret xiaomi_mac
+        gw_mac: !secret xiaomi_beneden_mac
         ringtone_id: 10001
         ringtone_vol: "30"
     - service: notify.jan

@@ -9,6 +9,12 @@
     light.lamp_achterdeur:
       state: off
     light.lamp_voordeur:
-     state: on
-     brightness: 75
+      state: on
+      brightness: 75
+    input_boolean.ledstrips_aan:
+      state: on
+    light.ledstrip_veranda:
+      state: on
+      brightness: 50
+    
     

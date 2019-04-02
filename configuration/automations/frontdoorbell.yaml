@@ -25,7 +25,7 @@
     - service: notify.jan
       data:
         title: "Er wordt aangebeld"
-        message: "De bel gaat. Live beeld: https://thuis.outside-url.com/states/group.beveiliging"    
+        message: "De bel gaat. Live beeld: https://thuis.ten-hove.net/states/group.beveiliging"    
         data:
           photo:
             - file: /tmp/voordeur.jpg
@@ -39,8 +39,8 @@
     to: 'on'
   condition:
   - condition: state
-    entity_id: input_boolean.jan_thuis
-    state: 'on' 
+    entity_id: person.jan
+    state: 'home' 
   action:
     - service: rest_command.autoremote_doorbell_jan
    
@@ -52,8 +52,8 @@
     to: 'on'
   condition:
   - condition: state
-    entity_id: input_boolean.manon_thuis
-    state: 'on' 
+    entity_id: person.manon
+    state: 'home' 
   action:
     - service: rest_command.autoremote_doorbell_manon
   

@@ -22,21 +22,25 @@ iedereen_slaapt:
   name: Iedereen slaapt
   icon: mdi:sleep
     
+iemand_thuis:
+  name: Iemand thuis
+  icon: mdi:home
+
 iemand_slaapt:
   name: Iemand slaapt
   icon: mdi:sleep
 
-jan_thuis:
-  name: Jan thuis
-  icon: mdi:home
+# jan_thuis:
+#   name: Jan thuis
+#   icon: mdi:home
   
-manon_thuis:
-  name: Manon thuis
-  icon: mdi:home
+# manon_thuis:
+#   name: Manon thuis
+#   icon: mdi:home
   
-alie_thuis:
-  name: Alie thuis
-  icon: mdi:home
+# alie_thuis:
+#   name: Alie thuis
+#   icon: mdi:home
 
 donker_buiten:
   name: Donker buiten

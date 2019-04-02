@@ -16,7 +16,7 @@
     condition: and
     conditions:
     - condition: state
-      entity_id: group.aanwezigheid
+      entity_id: input_boolean.iemand_thuis
       state: 'on'
     - condition: state
       entity_id: input_boolean.handdoek_radiator_auto
@@ -67,7 +67,7 @@
     condition: and
     conditions:
     - condition: state
-      entity_id: group.aanwezigheid
+      entity_id: input_boolean.iemand_thuis
       state: 'on'
     - condition: state
       entity_id: input_boolean.handdoek_radiator_auto

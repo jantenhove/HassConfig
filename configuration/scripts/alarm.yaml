@@ -3,7 +3,7 @@ alarm_loop:
     sequence:
       - service: xiaomi_aqara.play_ringtone
         data:
-          gw_mac: !secret xiaomi_mac
+          gw_mac: !secret xiaomi_beneden_mac
           ringtone_id: 2
           ringtone_vol: "100"
       - service: media_player.volume_set

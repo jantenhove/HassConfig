@@ -56,9 +56,9 @@ binary_sensor.voordeur_contact:
   device_class: door
 binary_sensor.schuurdeur_contact:
   device_class: door
-binary_sensor.door_window_sensor_158d000237c676:
+binary_sensor.deur_ian:
   device_class: door
-binary_sensor.door_window_sensor_158d000232a9f8:
+binary_sensor.raam_babykamer:
   device_class: window
 sensor.beweging_woonkamer_sensor_status:
   friendly_name: Beweging woonkamer

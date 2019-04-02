@@ -46,7 +46,7 @@
 #           entity_id: input_boolean.boiler_verwarming
 #           state: 'off'
 #         - condition: state
-#           entity_id: group.aanwezigheid
+#           entity_id: input_boolean.iemand_thuis
 #           state: 'on'
 #         #if temp rises today above 19, then no floor heating
 #         #low temp needs to be below 10
@@ -105,7 +105,7 @@
   hide_entity: False
   trigger:
     - platform: template
-      value_template: '{{ states.sensor.boiler_temperatuur.state | float > states.input_number.boiler_temperatuur.attributes.min | float }}' #only when boiler is at min temp
+      value_template: '{{ states.sensor.boiler_temperatuur.state | float > states.input_number.boiler_temperatuur.state | float }}' #only when boiler is at min temp
     - platform: state
       entity_id:  input_boolean.boiler_verwarming
       to: 'on'
@@ -158,9 +158,9 @@
         - condition: state
           entity_id: input_boolean.boiler_verwarming
           state: 'off'
-        - condition: numeric_state
-          entity_id: sensor.boiler_huidig_verbruik
-          below: 10
+        # - condition: numeric_state
+        #   entity_id: sensor.boiler_huidig_verbruik
+        #   below: 10
         - condition: state
           entity_id: binary_sensor.cv_verwarming
           state: 'on'
@@ -168,7 +168,7 @@
           entity_id: switch.alleen_boven_verwarmen
           state: 'off'
         - condition: template
-          value_template: '{{ states.sensor.boiler_temperatuur.state | float < states.input_number.boiler_temperatuur.attributes.min | float }}' #only when boiler is at min temp
+          value_template: '{{ states.sensor.boiler_temperatuur.state | float < states.input_number.boiler_temperatuur.state | float }}' #only when boiler is at set temp
   action:    
     - service: switch.turn_off
       entity_id: switch.cv_pomp_aan_ot

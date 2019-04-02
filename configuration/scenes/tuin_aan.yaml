@@ -11,4 +11,6 @@
     light.lamp_voordeur:
       state: on
       brightness: 255
+    input_boolean.ledstrips_aan:
+      state: on
 

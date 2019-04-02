@@ -46,17 +46,17 @@
   payload_on: "1"
   payload_off: "0"
   
-- platform: mqtt
-  name: "Telefoon Jan thuis"
-  state_topic: "tasker/Jan/home"
-  payload_on: "1"
-  payload_off: "0"
+# - platform: mqtt
+#   name: "Telefoon Jan thuis"
+#   state_topic: "tasker/Jan/home"
+#   payload_on: "1"
+#   payload_off: "0"
   
-- platform: mqtt
-  name: "Telefoon Manon thuis"
-  state_topic: "tasker/Manon/home"
-  payload_on: "1"
-  payload_off: "0"
+# - platform: mqtt
+#   name: "Telefoon Manon thuis"
+#   state_topic: "tasker/Manon/home"
+#   payload_on: "1"
+#   payload_off: "0"
   
 - platform: mqtt
   name: "Sonoff boiler status"
@@ -129,8 +129,8 @@
       device_class: door
       friendly_name: "Deur/raam boven open"
       value_template: >
-          {{ states.binary_sensor.door_window_sensor_158d000237c676.state == "on" or
-            states.binary_sensor.door_window_sensor_158d000232a9f8.state == "on"  }}
+          {{ states.binary_sensor.deur_ian.state == "on" or
+            states.binary_sensor.raam_babykamer.state == "on"  }}
             
 - platform: template
   sensors:

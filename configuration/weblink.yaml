@@ -3,23 +3,23 @@ entities:
     url: http://192.168.2.1/
     icon: mdi:router-wireless
   - name: Sonarr
-    url: https://sonarr.thuis.outside-url.com
+    url: https://sonarr.thuis.ten-hove.net
     icon: mdi:cloud-download
   - name: Radarr
-    url: https://radarr.thuis.outside-url.com
+    url: https://radarr.thuis.ten-hove.net
     icon: mdi:cloud-download
   - name: Sabnzbd
-    url: https://sab.thuis.outside-url.com
+    url: https://sab.thuis.ten-hove.net
     icon: mdi:cloud-download
   - name: Deluge
-    url: https://deluge.thuis.outside-url.com
+    url: https://deluge.thuis.ten-hove.net
     icon: mdi:cloud-download
   - name: Grafana
-    url: https://grafana.thuis.outside-url.com
+    url: https://grafana.thuis.ten-hove.net
     icon: mdi:graphql
   - name: Cameras
     url: http://nuc:8765
     icon: mdi:cctv
   - name: DSMR
-    url: https://dsmr.thuis.outside-url.com
+    url: https://dsmr.thuis.ten-hove.net
     icon: mdi:graphql    

@@ -3,7 +3,7 @@ beveiliging:
   view: yes
   entities:
     - group.camera
-    - group.aanwezigheid
+    - input_boolean.iemand_thuis
     - group.beweging_beneden
     - group.deuren
     - group.slaap_detectie
@@ -24,9 +24,9 @@ aanwezigheid:
   entities:
     #- device_tracker.jan
     #- device_tracker.manon
-    - input_boolean.jan_thuis
-    - input_boolean.manon_thuis
-    - input_boolean.alie_thuis
+    - person.jan
+    - person.manon
+    - person.alie
 
 deuren:
   name: Deuren en ramen
@@ -35,8 +35,8 @@ deuren:
     -  binary_sensor.achterdeur_contact
     -  binary_sensor.voordeur_contact
     -  binary_sensor.schuurdeur_contact
-    -  binary_sensor.door_window_sensor_158d000237c676
-    -  binary_sensor.door_window_sensor_158d000232a9f8
+    -  binary_sensor.deur_ian
+    -  binary_sensor.raam_babykamer
 
 slaap_detectie:
   name: Telefoons aan lader

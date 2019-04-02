@@ -44,7 +44,7 @@
       entity_id:  input_boolean.iemand_slaapt
       to: 'off'
     - platform: state
-      entity_id:  group.aanwezigheid
+      entity_id:  input_boolean.iemand_thuis
       to: 'on'
     - platform: numeric_state  
       entity_id: sensor.boiler_huidig_verbruik
@@ -67,7 +67,7 @@
         entity_id: input_boolean.iemand_slaapt
         state: 'off'
       - condition: state
-        entity_id: group.aanwezigheid
+        entity_id: input_boolean.iemand_thuis
         state: 'on'
       - condition: template
         value_template: '{{ states.sensor.dark_sky_daytime_high_apparent_temperature.state | float  > 15 | float}}'   #outside perceived temp
@@ -102,7 +102,7 @@
       entity_id:  input_boolean.iemand_slaapt, input_boolean.bad_aan
       to: 'on'
     - platform: state
-      entity_id:  group.aanwezigheid
+      entity_id:  input_boolean.iemand_thuis
       to: 'off'
     - platform: numeric_state  
       entity_id: sensor.boiler_huidig_verbruik
@@ -132,7 +132,7 @@
             entity_id: input_boolean.iemand_slaapt
             state: 'on'
           - condition: state
-            entity_id: group.aanwezigheid
+            entity_id: input_boolean.iemand_thuis
             state: 'off'
           - condition: state
             entity_id: input_boolean.bad_aan

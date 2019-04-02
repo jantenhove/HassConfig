@@ -1,7 +1,4 @@
 project_id: homeassistant111018
-#client_id: MXJODdAuc1K4qHU0egSs86lut8Uxo9NENx8ekJzzvaaVn2lF6LmzVldwgnTeqwnDzarnHT9VUF8cPb84
-#access_token: Ev1WvprJfE9cL0VId8IKVJytqdbDjR9dRYtLJQEGUbgf8WYzkPJTfXELnSkRW1FvA6SMeEGvtz96QqlO
-#agent_user_id: HassTenHove
 api_key: !secret google_assistant_api
 expose_by_default: false
 entity_config:
@@ -149,5 +146,19 @@ entity_config:
       - Goede nacht
       - Bonne nuit
     expose: true
-
+  climate.babykamer:
+    name: Temperatuur babykamer
+    aliases:
+      - Babykamer
+    expose: true
+  climate.badkamer:
+    name: Temperatuur badkamer
+    aliases:
+      - Badkamer
+    expose: true
+  climate.beneden:
+    name: Temperatuur beneden
+    aliases:
+      - Beneden
+    expose: true  
     

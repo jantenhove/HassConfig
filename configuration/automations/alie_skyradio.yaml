@@ -3,18 +3,18 @@
   hide_entity: False
   trigger:
     - platform: state
-      entity_id: input_boolean.alie_thuis
-      from: 'off'
-      to: 'on'
+      entity_id: person.alie
+      from: 'not_home'
+      to: 'home'
   condition:
     condition: and
     conditions:
       - condition: state
-        entity_id: input_boolean.jan_thuis
-        state: 'off'
+        entity_id: person.jan
+        state: 'not_home'
       - condition: state
-        entity_id: input_boolean.manon_thuis
-        state: 'off'
+        entity_id: person.manon
+        state: 'not_home'
   action:
     - delay:
         seconds: 30

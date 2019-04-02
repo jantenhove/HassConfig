@@ -1,0 +1,9 @@
+- platform: tomato
+  host: 192.168.2.1
+  username: admin
+  password:  !secret router_password
+  http_id: !secret router_http_id
+- platform: mqtt
+  devices:
+    telefoon_jan: 'tasker/Jan/home'
+    telefoon_manon: 'tasker/Manon/home'

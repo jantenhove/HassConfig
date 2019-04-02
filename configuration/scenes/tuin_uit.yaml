@@ -8,4 +8,7 @@
       state: off
     light.lamp_voordeur:
       state: off
+    input_boolean.ledstrips_aan:
+      state: off
+    
 
