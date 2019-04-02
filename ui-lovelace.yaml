@@ -4,10 +4,8 @@
 
 title: Jan en Manon
 resources:
-  - url: /local/button-card.js?v=0.2
+  - url: /local/button-card.js?v=0.3
     type: module
-  - url: /local/column-card.js
-    type: js
   - url: /local/vertical-style-card.js?v=0.1
     type: js
   - url: /local/alarm_control_panel-card.js
@@ -16,19 +14,57 @@ resources:
     type: js
   - url: /local/calendar-card.js?v=1.0.1
     type: module
-  - url: /local/popup-card.js?v=1
+  - url: /local/popup-card.js
     type: js
   - url: /local/custom-lovelace/compact-custom-header/compact-custom-header.js?v1
     type: js
   - url: /local/card-tools.js
     type: js
+popup_cards:
+  light.zithoek:
+    title: Zithoek lamp
+    card:
+      type: light
+      entity: light.zithoek
+  light.eettafel:
+    entity: light.eettafel
+    title: Eettafel lamp
+    card:
+      type: light
+      entity: light.eettafel
+  light.lampjes_kast:
+    entity: light.lampjes_kast
+    title: Lampjes kast
+    card:
+      type: light
+      entity: light.lampjes_kast
+  light.lamp_hoek:
+    entity: light.lamp_hoek
+    title: Bochel lamp hoek
+    card:
+      type: light
+      entity: light.lamp_hoek
+  light.spotjes_tuin:
+    entity: light.spotjes_tuin
+    title: Spotjes tuin
+    card:
+      type: light
+      entity: light.spotjes_tuin
+  light.veranda:
+    entity: light.veranda
+    title: Veranda
+    card:
+      type: light
+      entity: light.veranda
+          
+          
 custom_updater:
   card_urls: 
-    - https://raw.githubusercontent.com/kuuji/button-card/0.0.2/tracker.json
     - https://raw.githubusercontent.com/matisaul/vertical-style-card/master/tracker.json
 views:
   - title: Start
     panel: false 
+    
     cards:
     - type: custom:compact-custom-header
       user_agent: WallTab
@@ -44,6 +80,7 @@ views:
       - type: horizontal-stack      
         cards:
         - type: "custom:button-card"
+          color_type: card
           size: 35px
           action: service           
           service:
@@ -55,9 +92,10 @@ views:
           color: auto
           name: Aan
           style:
-            - font-size: 10px    
+            - font-size: 10px 
         - type: "custom:button-card"
           size: 35px
+          color_type: card
           action: service
           service:
             domain: scene
@@ -71,6 +109,7 @@ views:
             - font-size: 10px    
         - type: "custom:button-card"
           size: 35px
+          color_type: card
           action: service
           service:
             domain: scene
@@ -84,6 +123,7 @@ views:
             - font-size: 10px    
         - type: "custom:button-card"
           size: 35px
+          color_type: card
           action: service
           service:
             domain: scene
@@ -97,6 +137,7 @@ views:
             - font-size: 10px    
         - type: "custom:button-card"
           size: 35px
+          color_type: card
           action: service
           service:
             domain: input_boolean
@@ -105,7 +146,7 @@ views:
               entity_id: input_boolean.alles_uit
           icon: mdi:power
           color: red
-          name: Alles uit
+          name: Alles
           style:
             - font-size: 10px    
 
@@ -116,6 +157,7 @@ views:
         cards:
         - type: "custom:button-card"
           size: 35px
+          color_type: card
           action: service           
           service:
             domain: scene
@@ -129,6 +171,7 @@ views:
             - font-size: 10px  
         - type: "custom:button-card"
           size: 35px
+          color_type: card
           action: service
           service:
             domain: scene
@@ -139,9 +182,24 @@ views:
           color: auto
           name: Gedimd
           style:
-            - font-size: 10px    
+            - font-size: 10px   
         - type: "custom:button-card"
           size: 35px
+          color_type: card
+          action: service           
+          service:
+            domain: scene
+            action: turn_on
+            data:
+              entity_id: scene.tuinverlichting_jacuzzi
+          icon: mdi:hot-tub
+          color: auto
+          name: Jacuzzi
+          style:
+            - font-size: 10px   
+        - type: "custom:button-card"
+          size: 35px
+          color_type: card
           action: service
           service:
             domain: scene
@@ -173,30 +231,6 @@ views:
       #     entities:
       #       - scene.tuinverlichting_maximaal
       #       - scene.tuinverlichting_gedimd
-    - type: custom:popup-card
-      entity: light.zithoek
-      title: Zithoek lamp
-      card:
-        type: light
-        entity: light.zithoek
-    - type: custom:popup-card
-      entity: light.eettafel
-      title: Eettafel lamp
-      card:
-        type: light
-        entity: light.eettafel
-    - type: custom:popup-card
-      entity: light.lampjes_kast
-      title: Lampjes kast
-      card:
-        type: light
-        entity: light.lampjes_kast
-    - type: custom:popup-card
-      entity: light.lamp_hoek
-      title: Bochel lamp hoek
-      card:
-        type: light
-        entity: light.lamp_hoek
     
     - type: glance
       id: 2304u872308420394i
@@ -218,20 +252,7 @@ views:
           name: Keuken
           tap_action: 
             action: toggle
-          
-    - type: custom:popup-card
-      entity: light.spotjes_tuin
-      title: Spotjes tuin
-      card:
-        type: light
-        entity: light.spotjes_tuin
-    - type: custom:popup-card
-      entity: light.veranda
-      title: Veranda
-      card:
-        type: light
-        entity: light.veranda
-
+    
     - type: glance
       id: 2304u87230842039fsdaf
       title: Verlichting buiten
@@ -355,22 +376,73 @@ views:
       #     - switch.achterdeur_state
       #     - type: weblink
       #       name: Zoneminder
-      #       url: https://zm.thuis.outside-url.com/zm
+      #       url: https://zm.thuis.ten-hove.net/zm
       #       icon: mdi:cctv
-        
-      - type: glance
-        title: Aanwezigheid
-        columns: 4
-        show_header_toggle: false
-        entities:
-          - input_boolean.jan_thuis
-          - input_boolean.manon_thuis
-          - input_boolean.alie_thuis
-          - entity: automation.alles_auto_uit
-            name: Automatisch uit
-            icon: mdi:auto-fix
-            tap_action: 
+      - type: horizontal-stack      
+        cards:
+          - type: picture-entity
+            entity: person.jan
+            show_name: false
+            show_state: false
+            state_image:
+              "home": /local/images/icon_jan.png
+              "not_home": /local/images/icon_jan_bw.png
+          - type: picture-entity
+            entity: person.manon
+            show_name: false
+            show_state: false
+            state_image:
+              "home": /local/images/icon_manon.png
+              "not_home": /local/images/icon_manon_bw.png
+          - type: picture-entity
+            entity: person.alie
+            show_name: false
+            show_state: false
+            state_image:
+              "home": /local/images/icon_alie.png
+              "not_home": /local/images/icon_alie_bw.png
+          - type: picture-entity
+            entity: person.manon
+            show_name: false
+            show_state: false
+            state_image:
+              "home": /local/images/icon_ian.png
+              "not_home": /local/images/icon_ian_bw.png
+              
+      - type: custom:vertical-style-card
+        title: Automatisch
+        cards:
+        - type: horizontal-stack      
+          cards:
+          - type: "custom:button-card"
+            size: 35px
+            color_type: card
+            action: service          
+            service:
+              domain: automation
               action: toggle
+              data:
+                entity_id: automation.alles_auto_uit
+            icon: mdi:flash-auto
+            color: auto
+            name: Automatisch uitzetten
+            style:
+              - font-size: 12px 
+          - type: "custom:button-card"
+            size: 35px
+            color_type: card
+            action: service          
+            service:
+              domain: automation
+              action: toggle
+              data:
+                entity_id: automation.alarm_away_bij_alles_uit_niemand_thuis
+            icon: mdi:alarm-light
+            color: auto
+            name: Automatisch alarm aan
+            style:
+              - font-size: 12px 
+       
       - type: glance
         title: Beweging beneden
         columns: 3
@@ -378,14 +450,19 @@ views:
         entities:
           - entity: binary_sensor.fibaro_woonkamer_motion
             name: Woonkamer
+            icon: mdi:human-handsup
           - entity: sensor.beweging_woonkamer_achter_sensor_status
             name: Woonkamer 2
+            icon: mdi:human-handsup
           - entity: sensor.beweging_hal_sensor_status
             name: Hal
+            icon: mdi:human-handsup
           - entity: binary_sensor.beweging_camera_voor
             name: Voordeur
+            icon: mdi:door
           - entity: binary_sensor.beweging_camera_achter
             name: Achterdeur
+            icon: mdi:door
       - type: glance
         title: Deuren en ramen
         show_header_toggle: false
@@ -394,8 +471,8 @@ views:
           - binary_sensor.achterdeur_contact
           - binary_sensor.voordeur_contact
           - binary_sensor.schuurdeur_contact
-          - binary_sensor.door_window_sensor_158d000237c676
-          - binary_sensor.door_window_sensor_158d000232a9f8
+          - binary_sensor.deur_ian
+          - binary_sensor.raam_babykamer
       - type: glance
         title: Rookmelders
         columns: 2
@@ -427,6 +504,7 @@ views:
           cards:
           - type: "custom:button-card"
             size: 35px
+            color_type: card
             action: service           
             service:
               domain: scene
@@ -440,6 +518,7 @@ views:
               - font-size: 10px  
           - type: "custom:button-card"
             size: 35px
+            color_type: card
             action: service
             service:
               domain: scene
@@ -453,6 +532,7 @@ views:
               - font-size: 10px    
           - type: "custom:button-card"
             size: 35px
+            color_type: card
             action: service
             service:
               domain: scene
@@ -466,6 +546,22 @@ views:
               - font-size: 10px    
           - type: "custom:button-card"
             size: 35px
+            color_type: card
+            action: service           
+            service:
+              domain: scene
+              action: turn_on
+              data:
+                entity_id: scene.tuinverlichting_jacuzzi
+            icon: mdi:hot-tub
+            color: auto
+            name: Jacuzzi
+            style:
+              - font-size: 10px   
+          - type: "custom:button-card"
+            size: 35px
+            color_type: card
+            color: auto
             action: service
             service:
               domain: input_boolean
@@ -523,7 +619,7 @@ views:
           - sensor.sonarr_queue
           - type: weblink
             name: Sonarr
-            url: https://sonarr.thuis.outside-url.com
+            url: https://sonarr.thuis.ten-hove.net
             icon: mdi:cloud-download
       - type: entities
         title: Radarr
@@ -532,7 +628,7 @@ views:
           - sensor.radarr_upcoming
           - type: weblink
             name: Radarr
-            url: https://radarr.thuis.outside-url.com
+            url: https://radarr.thuis.ten-hove.net
             icon: mdi:cloud-download
       - type: entities
         title: Sabnzbd
@@ -540,7 +636,7 @@ views:
         entities:
           - type: weblink
             name: Sabnzbd
-            url: https://sab.thuis.outside-url.com
+            url: https://sab.thuis.ten-hove.net
             icon: mdi:cloud-download
       - type: entities
         title: Deluge
@@ -551,7 +647,7 @@ views:
           - sensor.deluge_up_speed
           - type: weblink
             name: Deluge
-            url: https://deluge.thuis.outside-url.com
+            url: https://deluge.thuis.ten-hove.net
             icon: mdi:cloud-download
   - title: Klimaat
     cards:
@@ -759,7 +855,7 @@ views:
           - sensor.totaal_kosten_vandaag
           - type: weblink
             name: DSMR
-            url: https://dsmr.thuis.outside-url.com
+            url: https://dsmr.thuis.ten-hove.net
             icon: mdi:graphql   
       - type: entities
         title: Boiler
@@ -769,12 +865,20 @@ views:
           - sensor.boiler_verbruik_vandaag
           - sensor.boiler_verbruik_totaal
       - type: entities
-        title: droger
+        title: Droger
         show_header_toggle: false
         entities:
           - sensor.droger_verbruik
           - sensor.droger_verbruik_vandaag
           - sensor.droger_verbruik_totaal
+      - type: entities
+        title: Jacuzzi
+        show_header_toggle: false
+        entities:
+          - sensor.jancuzzi_verbruik
+          - sensor.jancuzzi_verbruik_vandaag
+          - sensor.jancuzzi_verbruik_totaal
+
       # - type: picture-entity
       #   title: Elektra
       #   entity: camera.elektra

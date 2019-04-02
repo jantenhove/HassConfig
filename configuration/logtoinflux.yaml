@@ -37,6 +37,8 @@
       - input_number.boiler_temperatuur
       - sensor.boiler_huidig_verbruik
       - sensor.boiler_verbruik_vandaag
+      - sensor.jacuzzi_huidig_verbruik
+      - sensor.jacuzzi_verbruik_vandaag
       - sensor.boiler_verwarming_in_temperatuur
       - sensor.boiler_verwarming_uit_temperatuur
       - sensor.cv_ketel_boiler_temperatuur

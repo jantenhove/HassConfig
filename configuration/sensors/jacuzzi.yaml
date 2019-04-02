@@ -1,0 +1,26 @@
+
+- platform: mqtt
+  name: "Jacuzzi verbruik vandaag"
+  state_topic: "jacuzziPower/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Today"] }}'
+  unit_of_measurement: "kWh"
+- platform: mqtt
+  name: "Jacuzzi huidig verbruik"
+  state_topic: "jacuzziPower/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Power"] }}'
+  unit_of_measurement: "W"
+- platform: mqtt
+  name: "Jacuzzi voltage"
+  state_topic: "jacuzziPower/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Voltage"] }}'
+  unit_of_measurement: "V"
+- platform: mqtt
+  name: "Jacuzzi stroom"
+  state_topic: "jacuzziPower/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Current"] }}'
+  unit_of_measurement: "A"
+- platform: mqtt
+  name: "Jacuzzi Verbruik totaal"
+  state_topic: "jacuzziPower/sonoff/tele/SENSOR"
+  value_template: '{{ value_json["ENERGY"]["Total"] }}'
+  unit_of_measurement: "kWh"

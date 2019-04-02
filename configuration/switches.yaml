@@ -4,10 +4,11 @@
   devices:
     0b1100bb009e7b6e01000050:
       name: Afstandsbediening wit knop 1
-      #fire_event: true # to catch 'group off' event
+      fire_event: true # to catch 'group off' event
     0b110020009e7b6e03010f50:
       name: Afstandsbediening wit knop 3
-
+      fire_event: true # to catch 'group off' event
+      
 - platform: mqtt
   name: "Alleen boven verwarmen"
   state_topic: "espThermoValve/valve/state"
@@ -53,7 +54,16 @@
   payload_on: "ON"
   payload_off: "OFF"
   retain: true
-  
+
+- platform: mqtt
+  name: "Jacuzzi aan/uit"
+  state_topic: "jacuzziPower/sonoff/stat/POWER"
+  command_topic: "jacuzziPower/sonoff/cmnd/POWER"
+  qos: 1
+  payload_on: "ON"
+  payload_off: "OFF"
+  retain: true
+
 - platform: mqtt
   name: "Handoekradiator"
   state_topic: "handoekradiator/sonoff/stat/POWER"
